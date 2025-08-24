@@ -2,11 +2,14 @@ import React, { FC, ReactNode } from 'react'
 import { Search } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
+// --- Updated Prop Interfaces ---
+
+// InputProps: Changed onChange to pass the value directly
 interface InputProps {
   type?: string
   placeholder?: string
   value?: string
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onChange?: (value: string) => void // Accepts string value instead of event object
   className?: string
   autoFocus?: boolean
   disabled?: boolean
@@ -22,10 +25,11 @@ interface InputProps {
   label?: string
 }
 
+// TextAreaProps: Changed onChange to pass the value directly
 interface TextAreaProps {
   placeholder?: string
   value?: string
-  onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
+  onChange?: (value: string) => void // Accepts string value instead of event object
   className?: string
   disabled?: boolean
   required?: boolean
@@ -37,9 +41,10 @@ interface TextAreaProps {
   label?: string
 }
 
+// SelectProps: Changed onChange to pass the value directly
 interface SelectProps {
   value?: string
-  onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void
+  onChange?: (value: string) => void // Accepts string value instead of event object
   children: React.ReactNode
   className?: string
   disabled?: boolean
@@ -79,11 +84,13 @@ const FieldWrapper: FC<{ label?: string; id?: string; required?: boolean; helper
   </div>
 )
 
+// --- Updated Input Component ---
+
 const Input: React.FC<InputProps> = ({
   type = 'text',
   placeholder,
   value,
-  onChange,
+  onChange, // No need for 'e' now, it will be the string value
   className = '',
   autoFocus = false,
   disabled = false,
@@ -130,7 +137,8 @@ const Input: React.FC<InputProps> = ({
           type={type}
           placeholder={placeholder}
           value={value}
-          onChange={onChange}
+          // The key change is here: extract the value before calling onChange
+          onChange={(e) => onChange?.(e.target.value)}
           className={baseClasses}
           autoFocus={autoFocus}
           disabled={disabled}
@@ -150,10 +158,12 @@ const Input: React.FC<InputProps> = ({
   )
 }
 
+// --- Updated TextArea Component ---
+
 export const TextArea: React.FC<TextAreaProps> = ({
   placeholder,
   value,
-  onChange,
+  onChange, // No need for 'e' now, it will be the string value
   className = '',
   disabled = false,
   required = false,
@@ -178,7 +188,8 @@ export const TextArea: React.FC<TextAreaProps> = ({
       <textarea
         placeholder={placeholder}
         value={value}
-        onChange={onChange}
+        // The key change is here: extract the value before calling onChange
+        onChange={(e) => onChange?.(e.target.value)}
         className={baseClasses}
         disabled={disabled}
         required={required}
@@ -190,9 +201,11 @@ export const TextArea: React.FC<TextAreaProps> = ({
   )
 }
 
+// --- Updated Select Component ---
+
 export const Select: React.FC<SelectProps> = ({
   value,
-  onChange,
+  onChange, // No need for 'e' now, it will be the string value
   children,
   className = '',
   disabled = false,
@@ -216,7 +229,8 @@ export const Select: React.FC<SelectProps> = ({
     <FieldWrapper label={label} id={id} required={required} helperText={helperText} error={error}>
       <select
         value={value}
-        onChange={onChange}
+        // The key change is here: extract the value before calling onChange
+        onChange={(e) => onChange?.(e.target.value)}
         className={baseClasses}
         disabled={disabled}
         required={required}

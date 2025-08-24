@@ -10,6 +10,8 @@ import SearchInput from '../components/ui/SearchInput'
 import SheetCard from '../components/ui/SheetCard'
 import CreateSheetModal from '../components/ui/CreateSheetModal'
 import EditSheetModal from '../components/ui/EditSheetModal'
+import Input, { TextArea, Select } from '../components/ui/Input'
+
 
 interface ExpenseSheet {
   id: string
@@ -209,11 +211,12 @@ return (
       <div className="md:col-span-2">
         {/* Search + Button */}
         <div className="flex items-center justify-between mb-4">
-          <SearchInput
+          <Input
+            variant="search"
             value={searchQuery}
             onChange={setSearchQuery}
             placeholder="Search sheet"
-            className="w-full max-w-xs"
+            size="sm"
           />
           <Button
             onClick={() => setShowCreateModal(true)}
