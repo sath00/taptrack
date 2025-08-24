@@ -1,6 +1,57 @@
 @import "tailwindcss";
 
 :root {
+  /* ===== PRIMARY BRAND COLORS ===== */
+  --color-primary: #F59E0B;           /* Amber 500 - Main brand */
+  --color-primary-dark: #D97706;      /* Amber 600 - Darker variant */
+  --color-primary-light: #FEF3C7;     /* Amber 50 - Light background */
+  --color-primary-accent: #FCD34D;    /* Amber 300 - Borders/dividers */
+  
+  /* ===== SEMANTIC COLORS ===== */
+  --color-success: #10B981;           /* Emerald 500 - Success states */
+  --color-error: #EF4444;             /* Red 500 - Errors/alerts */
+  --color-warning: #F59E0B;           /* Amber 500 - Warnings (same as primary) */
+  
+  /* ===== TEXT COLORS ===== */
+  --color-text-primary: #111827;      /* Gray 900 - Main text */
+  --color-text-secondary: #6B7280;    /* Gray 500 - Secondary text */
+  --color-text-tertiary: #9CA3AF;     /* Gray 400 - Placeholder/muted */
+  --color-text-link: #F59E0B;         /* Amber 500 - Links/actions */
+  --color-text-disabled: #D1D5DB;     /* Gray 300 - Disabled text */
+  
+  /* ===== BACKGROUND COLORS ===== */
+  --color-bg-primary: #FFFFFF;        /* White - Main backgrounds */
+  --color-bg-secondary: #FEF3C7;      /* Amber 50 - Side panels, soft areas */
+  --color-bg-tertiary: #FFF7ED;       /* Amber 100 - Subtle highlights */
+  --color-bg-disabled: #F9FAFB;       /* Gray 50 - Disabled states */
+  
+  /* ===== BORDER COLORS ===== */
+  --color-border-primary: #E5E7EB;    /* Gray 200 - Default borders */
+  --color-border-secondary: #FCD34D;  /* Amber 300 - Subtle separators */
+  --color-border-focus: #F59E0B;      /* Amber 500 - Focused elements */
+  --color-border-disabled: #F3F4F6;   /* Gray 100 - Disabled borders */
+  
+  /* ===== ICON COLORS ===== */
+  --color-icon-primary: #D97706;      /* Amber 600 - Default icons */
+  --color-icon-secondary: #6B7280;    /* Gray 500 - Secondary icons */
+  --color-icon-active: #F59E0B;       /* Amber 500 - Active/selected icons */
+  --color-icon-disabled: #D1D5DB;     /* Gray 300 - Disabled icons */
+  
+  /* ===== INTERACTIVE STATE COLORS ===== */
+  --color-hover: #FFF7ED;             /* Amber 100 - Hover backgrounds */
+  --color-active: #F59E0B;            /* Amber 500 - Active/selected */
+  --color-active-bg: rgba(245, 158, 11, 0.1); /* Primary with 10% opacity */
+  --color-active-bg-strong: rgba(245, 158, 11, 0.15); /* Primary with 15% opacity */
+  --color-focus: #F59E0B;             /* Amber 500 - Focus states */
+  --color-pressed: #D97706;           /* Amber 600 - Pressed/clicked */
+  
+  /* ===== SHADOW COLORS ===== */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-amber: 0 4px 14px 0 rgba(245, 158, 11, 0.25);
+
+  /* Next.js defaults */
   --background: #ffffff;
   --foreground: #171717;
 }
@@ -23,4 +74,193 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* ===== UTILITY CLASSES ===== */
+
+/* Text Colors */
+.text-primary { color: var(--color-text-primary); }
+.text-secondary { color: var(--color-text-secondary); }
+.text-tertiary { color: var(--color-text-tertiary); }
+.text-link { color: var(--color-text-link); }
+.text-disabled { color: var(--color-text-disabled); }
+.text-success { color: var(--color-success); }
+.text-error { color: var(--color-error); }
+.text-warning { color: var(--color-warning); }
+
+/* Background Colors */
+.bg-primary { background-color: var(--color-bg-primary); }
+.bg-secondary { background-color: var(--color-bg-secondary); }
+.bg-tertiary { background-color: var(--color-bg-tertiary); }
+.bg-disabled { background-color: var(--color-bg-disabled); }
+.bg-brand { background-color: var(--color-primary); }
+.bg-brand-light { background-color: var(--color-primary-light); }
+.bg-active { background-color: var(--color-active-bg); }
+.bg-active-strong { background-color: var(--color-active-bg-strong); }
+.bg-hover { background-color: var(--color-hover); }
+.bg-success { background-color: var(--color-success); }
+.bg-error { background-color: var(--color-error); }
+
+/* Border Colors */
+.border-primary { border-color: var(--color-border-primary); }
+.border-secondary { border-color: var(--color-border-secondary); }
+.border-focus { border-color: var(--color-border-focus); }
+.border-disabled { border-color: var(--color-border-disabled); }
+.border-brand { border-color: var(--color-primary); }
+.border-success { border-color: var(--color-success); }
+.border-error { border-color: var(--color-error); }
+
+/* Icon Colors */
+.icon-primary { color: var(--color-icon-primary); }
+.icon-secondary { color: var(--color-icon-secondary); }
+.icon-active { color: var(--color-icon-active); }
+.icon-disabled { color: var(--color-icon-disabled); }
+.icon-success { color: var(--color-success); }
+.icon-error { color: var(--color-error); }
+
+/* Interactive States */
+.interactive:hover {
+  background-color: var(--color-hover);
+  transition: background-color 0.15s ease-in-out;
+}
+
+.interactive:active {
+  background-color: var(--color-active-bg);
+}
+
+.interactive:focus {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.interactive.active {
+  background-color: var(--color-active-bg-strong);
+  color: var(--color-primary-dark);
+  border-left: 3px solid var(--color-active);
+}
+
+.interactive:disabled {
+  background-color: var(--color-bg-disabled);
+  color: var(--color-text-disabled);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Button Variants */
+.btn-primary {
+  background-color: var(--color-primary);
+  color: white;
+  border: 1px solid var(--color-primary);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
+}
+
+.btn-primary:active {
+  background-color: var(--color-pressed);
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-active-bg);
+}
+
+.btn-outline {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border-primary);
+}
+
+.btn-outline:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-amber);
+}
+
+/* Form Elements */
+.form-input {
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-border-primary);
+  color: var(--color-text-primary);
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-input::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+.form-input:hover {
+  background-color: var(--color-bg-tertiary);
+}
+
+.form-input:focus {
+  border-color: var(--color-border-focus);
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+  outline: none;
+}
+
+.form-input:disabled {
+  background-color: var(--color-bg-disabled);
+  border-color: var(--color-border-disabled);
+  color: var(--color-text-disabled);
+}
+
+/* Side Panel Specific */
+.sidebar {
+  background-color: var(--color-bg-secondary);
+  border-right: 1px solid var(--color-border-secondary);
+}
+
+.sidebar-item {
+  color: var(--color-text-primary);
+  transition: all 0.15s ease-in-out;
+}
+
+.sidebar-item:hover {
+  background-color: var(--color-hover);
+}
+
+.sidebar-item.active {
+  background-color: var(--color-active-bg-strong);
+  color: var(--color-primary-dark);
+  border-left: 3px solid var(--color-active);
+}
+
+.sidebar-icon {
+  color: var(--color-icon-primary);
+}
+
+.sidebar-item.active .sidebar-icon {
+  color: var(--color-icon-active);
+}
+
+/* Shadow Utilities */
+.shadow-sm { box-shadow: var(--shadow-sm); }
+.shadow-md { box-shadow: var(--shadow-md); }
+.shadow-lg { box-shadow: var(--shadow-lg); }
+.shadow-amber { box-shadow: var(--shadow-amber); }
+
+/* Status Indicators */
+.status-success {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: var(--color-success);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.status-error {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: var(--color-error);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.status-warning {
+  background-color: rgba(245, 158, 11, 0.1);
+  color: var(--color-warning);
+  border: 1px solid rgba(245, 158, 11, 0.2);
 }
