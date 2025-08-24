@@ -4,9 +4,12 @@ import { useState, useEffect } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
-import { Plus, FileText, LogOut } from 'lucide-react'
+import { Plus, FileText } from 'lucide-react'
 import Button from '../components/ui/Button'
-
+import SearchInput from '../components/ui/SearchInput'
+import SheetCard from '../components/ui/SheetCard'
+import CreateSheetModal from '../components/ui/CreateSheetModal'
+import EditSheetModal from '../components/ui/EditSheetModal'
 
 interface ExpenseSheet {
   id: string
@@ -14,19 +17,22 @@ interface ExpenseSheet {
   created_at: string
   expense_count?: number
   total_amount?: number
+  is_pinned?: boolean
 }
 
 export default function Dashboard() {
   const { user, loading: authLoading, signOut } = useAuth()
   const [sheets, setSheets] = useState<ExpenseSheet[]>([])
   const [loading, setLoading] = useState(true)
-  const [showNewSheet, setShowNewSheet] = useState(false)
-  const [newSheetName, setNewSheetName] = useState('')
+  const [showCreateModal, setShowCreateModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [editingSheet, setEditingSheet] = useState<ExpenseSheet | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
   const router = useRouter()
 
   useEffect(() => {
     if (authLoading) return
-    
+
     if (!user) {
       router.push('/auth')
       return
@@ -45,12 +51,14 @@ export default function Dashboard() {
           id,
           name,
           created_at,
+          is_pinned,
           expenses (
             id,
             amount
           )
         `)
         .eq('user_id', user.id)
+        .order('is_pinned', { ascending: false })
         .order('created_at', { ascending: false })
 
       if (error) throw error
@@ -60,8 +68,9 @@ export default function Dashboard() {
         id: sheet.id,
         name: sheet.name,
         created_at: sheet.created_at,
+        is_pinned: sheet.is_pinned || false,
         expense_count: sheet.expenses?.length || 0,
-        total_amount: sheet.expenses?.reduce((sum: number, expense: any) => 
+        total_amount: sheet.expenses?.reduce((sum: number, expense: any) =>
           sum + parseFloat(expense.amount || 0), 0) || 0
       })) || []
 
@@ -73,31 +82,88 @@ export default function Dashboard() {
     }
   }
 
-  const createSheet = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!user || !newSheetName.trim()) return
+  const createSheet = async (name: string) => {
+    if (!user) throw new Error('User not authenticated')
+
+    const { data, error } = await supabase
+      .from('expense_sheets')
+      .insert({
+        user_id: user.id,
+        name: name,
+        is_pinned: false
+      })
+      .select()
+
+    if (error) throw error
+    fetchSheets()
+  }
+
+  const updateSheet = async (sheetId: string, name: string) => {
+    if (!user) throw new Error('User not authenticated')
+
+    const { error } = await supabase
+      .from('expense_sheets')
+      .update({ name })
+      .eq('id', sheetId)
+      .eq('user_id', user.id)
+
+    if (error) throw error
+    fetchSheets()
+  }
+
+  const deleteSheet = async (sheetId: string) => {
+    if (!user) throw new Error('User not authenticated')
+
+    // First delete all expenses in the sheet
+    await supabase
+      .from('expenses')
+      .delete()
+      .eq('sheet_id', sheetId)
+      .eq('user_id', user.id)
+
+    // Then delete the sheet
+    const { error } = await supabase
+      .from('expense_sheets')
+      .delete()
+      .eq('id', sheetId)
+      .eq('user_id', user.id)
+
+    if (error) throw error
+    fetchSheets() // Refresh the list
+  }
+
+  const togglePinSheet = async (sheetId: string, currentPinned: boolean) => {
+    if (!user) return
 
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('expense_sheets')
-        .insert({
-          user_id: user.id,
-          name: newSheetName.trim()
-        })
-        .select()
+        .update({ is_pinned: !currentPinned })
+        .eq('id', sheetId)
+        .eq('user_id', user.id)
 
       if (error) throw error
-
-      setNewSheetName('')
-      setShowNewSheet(false)
       fetchSheets() // Refresh the list
     } catch (error) {
-      console.error('Error creating sheet:', error)
+      console.error('Error toggling pin:', error)
     }
   }
 
   const openSheet = (sheetId: string) => {
-    router.push(`/input?sheet=${sheetId}`)
+    router.push(`/sheet/${sheetId}`)
+  }
+
+  const handleEditSheet = (sheet: ExpenseSheet) => {
+    setEditingSheet(sheet)
+    setShowEditModal(true)
+  }
+
+  const getFilteredSheets = () => {
+    if (!searchQuery.trim()) return sheets
+
+    return sheets.filter(sheet =>
+      sheet.name.toLowerCase().includes(searchQuery.toLowerCase())
+    )
   }
 
   if (authLoading || loading) {
@@ -111,109 +177,108 @@ export default function Dashboard() {
     )
   }
 
-  return (
-    <div className="min-h-screen bg-bg-tertiary">
-      {/* Header */}
-      {/* <div className="bg-bg-primary shadow-sm border-b border-border-primary">
-        <div className="max-w-lg mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-xl font-bold text-text-primary">My Sheets</h1>
-          <button
-            onClick={signOut}
-            className="p-2 text-icon-secondary hover:text-text-primary transition-colors"
-          >
-            <LogOut size={20} />
-          </button>
-        </div>
-      </div> */}
-
-      <div className="max-w-lg mx-auto p-4">
-        {/* Create New Sheet Button */}
-        <button
-          onClick={() => setShowNewSheet(true)}
-          className="w-full bg-primary text-white py-3 px-4 rounded-lg font-medium hover:bg-primary-600 transition-colors flex items-center justify-center gap-2 mb-6 shadow-amber"
-        >
-          <Plus size={20} />
-          New Sheet
+return (
+  <div className="min-h-screen bg-bg-tertiary flex">
+    {/* Sidebar TODO: make this a component and make the height sticky*/}
+    <aside className="hidden md:flex flex-col w-60 bg-bg-secondary border-r border-border-primary p-4">
+      <h2 className="text-xl font-bold text-primary mb-6">TapTrack</h2>
+      <nav className="flex-1 space-y-2">
+        <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-bg-tertiary font-medium text-text-primary">
+          Personal
         </button>
+        <button
+          disabled
+          className="w-full text-left px-3 py-2 rounded-lg font-medium text-text-secondary"
+        >
+          Shared (Coming soon)
+        </button>
+      </nav>
+      <div className="mt-auto space-y-2">
+        <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-bg-tertiary text-text-primary">
+          Profile
+        </button>
+        <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-bg-tertiary text-text-primary">
+          Logout
+        </button>
+      </div>
+    </aside>
 
-        {/* New Sheet Form */}
-        {showNewSheet && (
-          <div className="bg-bg-primary rounded-lg shadow-md border border-border-primary p-4 mb-6">
-            <form onSubmit={createSheet} className="space-y-4">
-              <input
-                type="text"
-                placeholder="Sheet name (e.g., Personal, Business)"
-                value={newSheetName}
-                onChange={(e) => setNewSheetName(e.target.value)}
-                className="form-input w-full px-4 py-3 rounded-lg"
-                autoFocus
-              />
-              <div className="flex gap-2">
-                <button
-                  type="submit"
-                  className="btn-primary flex-1 py-2 rounded-lg font-medium transition-colors"
-                >
-                  Create
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowNewSheet(false)
-                    setNewSheetName('')
-                  }}
-                  className="btn-outline flex-1 py-2 rounded-lg font-medium transition-colors"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
+    {/* Main Content + Quick Stats */}
+    <main className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
+      {/* Center content (Sheets) */}
+      <div className="md:col-span-2">
+        {/* Search + Button */}
+        <div className="flex items-center justify-between mb-4">
+          <SearchInput
+            value={searchQuery}
+            onChange={setSearchQuery}
+            placeholder="Search sheet"
+            className="w-full max-w-xs"
+          />
+          <Button
+            onClick={() => setShowCreateModal(true)}
+            variant="secondary"
+          >
+            <Plus size={16}/>
+            Add new sheet
+          </Button>
+        </div>
+
+        <h2 className="text-lg font-semibold text-text-primary mb-3">
+          My Sheets {searchQuery && `(${getFilteredSheets().length} found)`}
+        </h2>
 
         {/* Sheets List */}
-        <div className="space-y-3">
-          {sheets.length === 0 ? (
+        <div className="space-y-4">
+        {getFilteredSheets().length === 0 ? (
             <div className="bg-bg-primary rounded-lg shadow-sm border border-border-primary p-8 text-center">
-              <FileText size={48} className="mx-auto text-icon-disabled mb-4" />
-              <h3 className="text-lg font-medium text-text-primary mb-2">No sheets yet</h3>
-              <p className="text-text-secondary">Create your first expense sheet to get started</p>
+            <FileText size={48} className="mx-auto text-icon-disabled mb-4" />
+            <h3 className="text-lg font-medium text-text-primary mb-2">
+                {searchQuery ? 'No sheets found' : 'No sheets yet'}
+            </h3>
+            <p className="text-text-secondary">
+                {searchQuery
+                ? 'Try adjusting your search terms'
+                : 'Create your first expense sheet to get started'}
+            </p>
+            {searchQuery && (
+                <Button
+                onClick={() => setSearchQuery('')}
+                variant="ghost"
+                className="mt-3"
+                >
+                Clear search
+                </Button>
+            )}
             </div>
-          ) : (
-            sheets.map((sheet) => (
-              <div
+        ) : (
+            getFilteredSheets().map((sheet) => (
+            <SheetCard
                 key={sheet.id}
+                id={sheet.id}
+                name={sheet.name}
+                expenseCount={sheet.expense_count || 0}
+                totalAmount={sheet.total_amount || 0}
+                createdAt={sheet.created_at}
+                isPinned={sheet.is_pinned || false}
                 onClick={() => openSheet(sheet.id)}
-                className="interactive bg-bg-primary rounded-lg shadow-sm border border-border-primary p-4 cursor-pointer"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <h3 className="font-medium text-text-primary">{sheet.name}</h3>
-                    <div className="flex items-center gap-4 mt-1 text-sm text-text-secondary">
-                      <span>{sheet.expense_count} expenses</span>
-                      <span className="text-success font-semibold">₱{sheet.total_amount?.toFixed(2) || '0.00'}</span>
-                    </div>
-                    <p className="text-xs text-text-tertiary mt-1">
-                      Created {new Date(sheet.created_at).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <FileText size={20} className="text-icon-secondary" />
-                  </div>
-                </div>
-              </div>
+                onEdit={() => handleEditSheet(sheet)}
+                onTogglePin={() => togglePinSheet(sheet.id, sheet.is_pinned || false)}
+            />
             ))
-          )}
+        )}
         </div>
 
-        {/* Quick Stats */}
+      </div>
+
+      {/* Quick Stats */}
+      <div>
         {sheets.length > 0 && (
-          <div className="bg-bg-primary rounded-lg shadow-sm border border-border-primary p-4 mt-6">
+          <div className="bg-bg-primary rounded-lg shadow-sm border border-border-primary p-4">
             <h3 className="font-medium text-text-primary mb-3">Quick Stats</h3>
             <div className="grid grid-cols-2 gap-4 text-center">
               <div className="p-3 bg-bg-secondary rounded-lg">
-                <div className="text-2xl font-bold text-primary">
-                  {sheets.length}
-                </div>
+                <div className="text-2xl font-bold text-primary">{sheets.length}</div>
                 <div className="text-sm text-text-secondary">Total Sheets</div>
               </div>
               <div className="p-3 bg-bg-secondary rounded-lg">
@@ -226,6 +291,25 @@ export default function Dashboard() {
           </div>
         )}
       </div>
-    </div>
-  )
+    </main>
+
+    {/* Modals */}
+    <CreateSheetModal
+      isOpen={showCreateModal}
+      onClose={() => setShowCreateModal(false)}
+      onSubmit={createSheet}
+    />
+
+    <EditSheetModal
+      isOpen={showEditModal}
+      onClose={() => {
+        setShowEditModal(false)
+        setEditingSheet(null)
+      }}
+      onSubmit={(name) => updateSheet(editingSheet!.id, name)}
+      onDelete={() => deleteSheet(editingSheet!.id)}
+      currentName={editingSheet?.name || ''}
+    />
+  </div>
+)
 }

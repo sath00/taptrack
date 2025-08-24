@@ -22,7 +22,7 @@ interface Expense {
 }
 
 const CATEGORIES = [
-  'Food', 'Transportation', 'Pets', 'Skincare', 'Shopping', 
+  'Food', 'Transportation', 'Pets', 'Skincare', 'Shopping',
   'Bills', 'Entertainment', 'Health', 'Other'
 ]
 

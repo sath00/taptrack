@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import Button from '../components/ui/Button'
+import Button from '../../components/ui/Button'
 import { Plus, Download, Trash2, Save, Edit } from 'lucide-react'
 
 export default function ButtonTestPage() {
@@ -194,23 +194,46 @@ export default function ButtonTestPage() {
             <h2 className="text-xl font-semibold text-text-primary mb-4">Form Example</h2>
             <div className="bg-bg-secondary rounded-lg p-6 border border-border-secondary">
               <form className="space-y-4">
+                {/* Inputs */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     placeholder="Your name"
-                    className="form-input px-4 py-2 rounded-lg"
+                    className="
+                      w-full rounded-lg px-4 py-2
+                      border border-border-primary
+                      bg-bg-primary text-text-primary placeholder-text-tertiary
+                      focus:outline-none focus:border-border-focus focus:ring-2 focus:ring-primary-300
+                      disabled:bg-bg-disabled disabled:text-text-disabled disabled:cursor-not-allowed
+                    "
                   />
                   <input 
                     type="email" 
                     placeholder="Your email"
-                    className="form-input px-4 py-2 rounded-lg"
+                    className="
+                      w-full rounded-lg px-4 py-2
+                      border border-border-primary
+                      bg-bg-primary text-text-primary placeholder-text-tertiary
+                      focus:outline-none focus:border-border-focus focus:ring-2 focus:ring-primary-300
+                      disabled:bg-bg-disabled disabled:text-text-disabled disabled:cursor-not-allowed
+                    "
                   />
                 </div>
+
+                {/* Textarea */}
                 <textarea 
                   placeholder="Your message"
                   rows={4}
-                  className="form-input w-full px-4 py-2 rounded-lg"
+                  className="
+                    w-full rounded-lg px-4 py-2
+                    border border-border-primary
+                    bg-bg-primary text-text-primary placeholder-text-tertiary
+                    focus:outline-none focus:border-border-focus focus:ring-2 focus:ring-primary-300
+                    disabled:bg-bg-disabled disabled:text-text-disabled disabled:cursor-not-allowed
+                  "
                 />
+
+                {/* Actions */}
                 <div className="flex flex-wrap gap-3 justify-end">
                   <Button variant="ghost">Clear Form</Button>
                   <Button variant="outline">Save Draft</Button>
@@ -222,6 +245,7 @@ export default function ButtonTestPage() {
               </form>
             </div>
           </section>
+
         </div>
       </div>
     </div>

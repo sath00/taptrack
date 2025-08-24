@@ -2,49 +2,49 @@
 
 :root {
   /* ===== PRIMARY BRAND COLORS ===== */
-  --color-primary: #F59E0B;           /* Amber 500 - Main brand */
+  --color-primary: #F59E0B;          /* Amber 500 - Main brand */
   --color-primary-dark: #D97706;      /* Amber 600 - Darker variant */
-  --color-primary-light: #FEF3C7;     /* Amber 50 - Light background */
+  --color-primary-light: #FEF3C7;      /* Amber 50 - Light background */
   --color-primary-accent: #FCD34D;    /* Amber 300 - Borders/dividers */
-  
+
   /* ===== SEMANTIC COLORS ===== */
-  --color-success: #10B981;           /* Emerald 500 - Success states */
-  --color-error: #EF4444;             /* Red 500 - Errors/alerts */
-  --color-warning: #F59E0B;           /* Amber 500 - Warnings (same as primary) */
-  
+  --color-success: #10B981;          /* Emerald 500 - Success states */
+  --color-error: #EF4444;            /* Red 500 - Errors/alerts */
+  --color-warning: #F59E0B;          /* Amber 500 - Warnings (same as primary) */
+
   /* ===== TEXT COLORS ===== */
   --color-text-primary: #111827;      /* Gray 900 - Main text */
   --color-text-secondary: #6B7280;    /* Gray 500 - Secondary text */
   --color-text-tertiary: #9CA3AF;     /* Gray 400 - Placeholder/muted */
-  --color-text-link: #F59E0B;         /* Amber 500 - Links/actions */
+  --color-text-link: #F59E0B;          /* Amber 500 - Links/actions */
   --color-text-disabled: #D1D5DB;     /* Gray 300 - Disabled text */
-  
+
   /* ===== BACKGROUND COLORS ===== */
   --color-bg-primary: #FFFFFF;        /* White - Main backgrounds */
   --color-bg-secondary: #FEF3C7;      /* Amber 50 - Side panels, soft areas */
-  --color-bg-tertiary: #FFF7ED;       /* Amber 100 - Subtle highlights */
-  --color-bg-disabled: #F9FAFB;       /* Gray 50 - Disabled states */
-  
+  --color-bg-tertiary: #FFF7ED;      /* Amber 100 - Subtle highlights */
+  --color-bg-disabled: #F9FAFB;      /* Gray 50 - Disabled states */
+
   /* ===== BORDER COLORS ===== */
   --color-border-primary: #E5E7EB;    /* Gray 200 - Default borders */
   --color-border-secondary: #FCD34D;  /* Amber 300 - Subtle separators */
   --color-border-focus: #F59E0B;      /* Amber 500 - Focused elements */
   --color-border-disabled: #F3F4F6;   /* Gray 100 - Disabled borders */
-  
+
   /* ===== ICON COLORS ===== */
   --color-icon-primary: #D97706;      /* Amber 600 - Default icons */
   --color-icon-secondary: #6B7280;    /* Gray 500 - Secondary icons */
-  --color-icon-active: #F59E0B;       /* Amber 500 - Active/selected icons */
+  --color-icon-active: #F59E0B;      /* Amber 500 - Active/selected icons */
   --color-icon-disabled: #D1D5DB;     /* Gray 300 - Disabled icons */
-  
+
   /* ===== INTERACTIVE STATE COLORS ===== */
-  --color-hover: #FFF7ED;             /* Amber 100 - Hover backgrounds */
-  --color-active: #F59E0B;            /* Amber 500 - Active/selected */
+  --color-hover: #FFF7ED;              /* Amber 100 - Hover backgrounds */
+  --color-active: #F59E0B;              /* Amber 500 - Active/selected */
   --color-active-bg: rgba(245, 158, 11, 0.1); /* Primary with 10% opacity */
   --color-active-bg-strong: rgba(245, 158, 11, 0.15); /* Primary with 15% opacity */
-  --color-focus: #F59E0B;             /* Amber 500 - Focus states */
-  --color-pressed: #D97706;           /* Amber 600 - Pressed/clicked */
-  
+  --color-focus: #F59E0B;              /* Amber 500 - Focus states */
+  --color-pressed: #D97706;            /* Amber 600 - Pressed/clicked */
+
   /* ===== SHADOW COLORS ===== */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
@@ -119,9 +119,12 @@ body {
 .icon-error { color: var(--color-error); }
 
 /* Interactive States */
+.interactive {
+  transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
+}
+
 .interactive:hover {
   background-color: var(--color-hover);
-  transition: background-color 0.15s ease-in-out;
 }
 
 .interactive:active {
@@ -146,6 +149,8 @@ body {
   opacity: 0.6;
 }
 
+/* --- */
+
 /* Button Variants */
 .btn-primary {
   background-color: var(--color-primary);
@@ -156,10 +161,19 @@ body {
 .btn-primary:hover {
   background-color: var(--color-primary-dark);
   border-color: var(--color-primary-dark);
+  box-shadow: var(--shadow-amber);
 }
 
 .btn-primary:active {
   background-color: var(--color-pressed);
+}
+
+.btn-primary:disabled {
+  background-color: var(--color-primary-light);
+  border-color: var(--color-primary-light);
+  color: var(--color-text-disabled);
+  box-shadow: none;
+  cursor: not-allowed;
 }
 
 .btn-secondary {
@@ -170,6 +184,13 @@ body {
 
 .btn-secondary:hover {
   background-color: var(--color-active-bg);
+}
+
+.btn-secondary:disabled {
+  background-color: var(--color-bg-disabled);
+  border-color: var(--color-border-disabled);
+  color: var(--color-text-disabled);
+  cursor: not-allowed;
 }
 
 .btn-outline {
@@ -183,9 +204,66 @@ body {
   box-shadow: var(--shadow-amber);
 }
 
+.btn-outline:disabled {
+  border-color: var(--color-border-disabled);
+  box-shadow: none;
+  color: var(--color-text-disabled);
+  cursor: not-allowed;
+}
+
+.btn-ghost {
+  background-color: transparent;
+  color: var(--color-text-secondary);
+}
+
+.btn-ghost:hover {
+  color: var(--color-primary);
+  background-color: var(--color-primary-light);
+}
+
+.btn-ghost:disabled {
+  color: var(--color-text-disabled);
+  background-color: transparent;
+  cursor: not-allowed;
+}
+
+.btn-danger {
+  background-color: var(--color-error);
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: rgba(239, 68, 68, 0.8);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-danger:disabled {
+  background-color: var(--color-error);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.btn-success {
+  background-color: var(--color-success);
+  color: white;
+}
+
+.btn-success:hover {
+  background-color: rgba(16, 185, 129, 0.8);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-success:disabled {
+  background-color: var(--color-success);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* --- */
+
 /* Form Elements */
 .form-input {
-  background-color: var(--color-bg-primary);
+  /* background-color: var(--color-bg-primary); */
   border: 1px solid var(--color-border-primary);
   color: var(--color-text-primary);
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
@@ -196,7 +274,7 @@ body {
 }
 
 .form-input:hover {
-  background-color: var(--color-bg-tertiary);
+  /* background-color: var(--color-bg-tertiary); */
 }
 
 .form-input:focus {
@@ -210,6 +288,17 @@ body {
   border-color: var(--color-border-disabled);
   color: var(--color-text-disabled);
 }
+
+/* New: Error state for form inputs */
+.form-input-error {
+  border-color: var(--color-error);
+}
+
+.form-input-error:focus {
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
 
 /* Side Panel Specific */
 .sidebar {

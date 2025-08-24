@@ -9,53 +9,53 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Your custom brand colors
-        primary: {
-          DEFAULT: '#F59E0B', // Amber 500
-          50: '#FEF3C7',
-          100: '#FFF7ED', 
-          300: '#FCD34D',
-          500: '#F59E0B',
-          600: '#D97706',
-          900: '#111827',
-        },
-        // Custom semantic colors
-        success: '#10B981',
-        error: '#EF4444',
-        warning: '#F59E0B',
-        // Custom text colors
-        text: {
-          primary: '#111827',
-          secondary: '#6B7280',
-          tertiary: '#9CA3AF',
-          disabled: '#D1D5DB',
-        },
-        // Custom background colors
-        bg: {
-          primary: '#FFFFFF',
-          secondary: '#FEF3C7',
-          tertiary: '#FFF7ED',
-          disabled: '#F9FAFB',
-        },
-        // Custom border colors
-        border: {
-          primary: '#E5E7EB',
-          secondary: '#FCD34D',
-          focus: '#F59E0B',
-          disabled: '#F3F4F6',
-        },
-        // Custom icon colors
-        icon: {
-          primary: '#D97706',
-          secondary: '#6B7280',
-          active: '#F59E0B',
-          disabled: '#D1D5DB',
-        }
+        // // Brand
+        // 'brand': '#F59E0B',
+        // 'brand-hover': '#D97706',
+        // 'brand-light': '#FCD34D',
+
+        // // // Semantic
+        // // 'success': '#10B981',
+        // // 'success-hover': '#059669',
+        // // 'error': '#EF4444',
+        // // 'error-hover': '#DC2626',
+        // // 'warning': '#F59E0B',
+
+        // // Text
+        // 'text-primary': '#111827',
+        // 'text-secondary': '#6B7280',
+        // 'text-tertiary': '#9CA3AF',
+        // 'text-disabled': '#D1D5DB',
+
+        // // Background
+        // 'primary': '#FFFFFF',
+        // 'secondary': '#FEF3C7',
+        // 'secondary-hover': '#FCD34D',
+        // 'tertiary': '#FFF7ED',
+        // 'disabled': '#F9FAFB',
+
+        // // Borders
+        // 'border-primary': '#E5E7EB',
+        // 'border-secondary': '#FCD34D',
+        // 'border-disabled': '#F3F4F6',
       },
       boxShadow: {
         'amber': '0 4px 14px 0 rgba(245, 158, 11, 0.25)',
-      }
+      },
     },
   },
+  variants: {
+    extend: {
+      backgroundColor: ['hover', 'disabled'],
+      borderColor: ['hover', 'disabled'],
+      textColor: ['hover', 'disabled'],
+    },
+  },
+  safelist: [
+    'bg-brand', 'hover:bg-brand-hover', 'disabled:bg-brand',
+    'bg-primary', 'hover:bg-secondary-hover', 'disabled:bg-disabled',
+    'border-border-secondary', 'hover:border-border-secondary', 'disabled:border-disabled',
+    'text-primary', 'text-secondary', 'hover:text-primary', 'disabled:text-secondary',
+  ],
   plugins: [],
 } satisfies Config;
