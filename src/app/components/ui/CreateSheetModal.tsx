@@ -46,22 +46,11 @@ const CreateSheetModal: React.FC<CreateSheetModalProps> = ({
       onClose={handleClose}
       title="Create New Sheet"
       size="md"
-    >
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <Input
-          label="Sheet Name"
-          placeholder="Enter sheet name (e.g., Monthly Expenses, Trip Budget)"
-          value={sheetName}
-          onChange={(e) => setSheetName(e.target.value)}
-          autoFocus
-          required
-          disabled={loading}
-        />
-        
-        <div className="flex justify-end gap-3 pt-4">
+      footerRight={
+        <>
           <Button
             type="button"
-            variant="ghost"
+            variant="secondary"
             onClick={handleClose}
             disabled={loading}
           >
@@ -72,10 +61,22 @@ const CreateSheetModal: React.FC<CreateSheetModalProps> = ({
             variant="primary"
             loading={loading}
             disabled={!sheetName.trim()}
+            onClick={handleSubmit}
           >
-            Create Sheet
+            Create
           </Button>
-        </div>
+        </>
+      }
+    >
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <Input
+          placeholder="Enter sheet name"
+          value={sheetName}
+          onChange={setSheetName}
+          autoFocus
+          required
+          disabled={loading}
+        />
       </form>
     </Modal>
   )

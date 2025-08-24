@@ -220,7 +220,7 @@ return (
           />
           <Button
             onClick={() => setShowCreateModal(true)}
-            variant="secondary"
+            variant="primary"
           >
             <Plus size={16}/>
             Add new sheet

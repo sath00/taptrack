@@ -1,5 +1,5 @@
 import React from 'react'
-import { Heart, Edit2, FileText, Plus } from 'lucide-react'
+import { Pin, Edit2, FileText, Plus } from 'lucide-react'
 import Button from './Button'
 
 interface SheetCardProps {
@@ -75,7 +75,7 @@ const SheetCard: React.FC<SheetCardProps> = ({
               size="sm"
               onClick={handlePin}
             >
-              <Heart
+              <Pin
                 size={14}
                 className={isPinned ? 'fill-current' : ''}
               />

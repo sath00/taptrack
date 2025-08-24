@@ -46,6 +46,7 @@ const EditSheetModal: React.FC<EditSheetModalProps> = ({
     }
   }
 
+  // TODO: make a confirmation modal
   const handleDelete = async () => {
     if (!confirm('Are you sure you want to delete this sheet? This action cannot be undone.')) {
       return
@@ -74,48 +75,49 @@ const EditSheetModal: React.FC<EditSheetModalProps> = ({
       onClose={handleClose}
       title="Edit Sheet"
       size="md"
+      footerLeft={
+        <Button
+          type="button"
+          variant="danger"
+          onClick={handleDelete}
+          loading={deleteLoading}
+          disabled={loading}
+        >
+          Delete
+        </Button>
+      }
+      footerRight={
+        <>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={handleClose}
+            disabled={loading}
+          >
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            variant="primary"
+            loading={loading}
+            disabled={!sheetName.trim()}
+            onClick={handleSubmit}
+          >
+            Save
+          </Button>
+        </>
+      }
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         <Input
           label="Sheet Name"
           placeholder="Enter sheet name"
           value={sheetName}
-          onChange={(e) => setSheetName(e.target.value)}
+          onChange={setSheetName}
           autoFocus
           required
           disabled={loading || deleteLoading}
         />
-        
-        <div className="flex justify-between pt-4">
-          <Button
-            type="button"
-            variant="danger"
-            onClick={handleDelete}
-            loading={deleteLoading}
-            disabled={loading}
-          >
-            Delete Sheet
-          </Button>
-          
-          <div className="flex gap-3">
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={handleClose}
-              disabled={loading || deleteLoading}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              variant="primary"
-              loading={loading}
-              disabled={!sheetName.trim() || deleteLoading}
-            >
-              Save Changes
-            </Button>
-          </div>
-        </div>
       </form>
     </Modal>
   )
