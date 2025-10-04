@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { supabase } from '@/lib/supabase'
+import { useDispatch } from 'react-redux'
 import { useRouter } from 'next/navigation'
 import { Plus, FileText } from 'lucide-react'
 import Button from '../components/ui/Button'
@@ -23,6 +24,7 @@ interface ExpenseSheet {
 }
 
 export default function Dashboard() {
+  const dispatch = useDispatch()
   const { user, loading: authLoading, signOut } = useAuth()
   const [sheets, setSheets] = useState<ExpenseSheet[]>([])
   const [loading, setLoading] = useState(true)
@@ -41,7 +43,7 @@ export default function Dashboard() {
     }
 
     fetchSheets()
-  }, [user, authLoading, router])
+  }, [user, authLoading, router, dispatch])
 
   const fetchSheets = async () => {
     if (!user) return

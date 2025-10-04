@@ -1,41 +1,58 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
-import { User } from '@supabase/supabase-js'
+import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { fetchProfile, logout, clearError, clearMessage } from '@/store/slices/authSlice'
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
 
 export function useAuth() {
-  const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
+  const dispatch = useAppDispatch()
   const router = useRouter()
 
+  const {
+    user,
+    tokens,
+    isAuthenticated,
+    loading,
+    error,
+    message
+  } = useAppSelector((state) => state.auth)
+
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
-      setLoading(false)
-    })
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user ?? null)
-        setLoading(false)
-      }
-    )
-
-    return () => subscription.unsubscribe()
-  }, [])
+    // If we have tokens but no user, fetch the profile
+    if (tokens && !user && !loading) {
+      dispatch(fetchProfile())
+    }
+  }, [tokens, user, loading, dispatch])
 
   const signOut = async () => {
-    await supabase.auth.signOut()
-    router.push('/auth')
+    try {
+      await dispatch(logout()).unwrap()
+      router.push('/auth')
+    } catch (error) {
+      console.error('Logout error:', error)
+      // Force redirect even if logout fails
+      router.push('/auth')
+    }
+  }
+
+  const clearAuthError = () => {
+    dispatch(clearError())
+  }
+
+  const clearAuthMessage = () => {
+    dispatch(clearMessage())
   }
 
   return {
     user,
+    tokens,
+    isAuthenticated,
     loading,
-    signOut
+    error,
+    message,
+    signOut,
+    clearError: clearAuthError,
+    clearMessage: clearAuthMessage
   }
 }
