@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
-import { api } from '@/lib/api'
+import { authApi } from '@/lib/api/auth'
 
 // Types
 export interface User {
@@ -37,9 +37,12 @@ export const login = createAsyncThunk<AuthResponse, LoginCredentials>(
   'auth/login',
   async ({ email, password }, { rejectWithValue }) => {
     try {
-      return await api.login(email, password)
-    } catch (error: any) {
-      return rejectWithValue(error.message || 'Login failed')
+      return await authApi.login(email, password)
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message)
+      }
+      return rejectWithValue('An unknown error occurred')
     }
   }
 )
@@ -48,10 +51,13 @@ export const register = createAsyncThunk<AuthResponse, LoginCredentials>(
   'auth/register',
   async ({ email, password }, { rejectWithValue }) => {
     try {
-      const data = await api.register(email, password)
+      const data = await authApi.register(email, password)
       return data
-    } catch (error: any) {
-      return rejectWithValue(error.message || 'Registration failed')
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message)
+      }
+      return rejectWithValue('An unknown error occurred')
     }
   }
 )
@@ -60,7 +66,7 @@ export const logout = createAsyncThunk<void, void>(
   'auth/logout',
   async (_, { rejectWithValue }) => {
     try {
-      await api.logout()
+      await authApi.logout()
     } catch (error) {
       // Continue with logout even if request fails
       console.error('Logout error:', error)
@@ -77,10 +83,13 @@ export const refreshToken = createAsyncThunk<{ tokens: Tokens }, void>(
         throw new Error('No refresh token available')
       }
 
-      const newTokens = await api.refreshAccessToken()
+      const newTokens = await authApi.refreshAccessToken()
       return { tokens: newTokens }
-    } catch (error: any) {
-      return rejectWithValue(error.message || 'Token refresh failed')
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message)
+      }
+      return rejectWithValue('An unknown error occurred')
     }
   }
 )
@@ -89,10 +98,13 @@ export const fetchProfile = createAsyncThunk<User, void>(
   'auth/fetchProfile',
   async (_, { rejectWithValue }) => {
     try {
-      const profile = await api.getProfile()
+      const profile = await authApi.getProfile()
       return profile
-    } catch (error: any) {
-      return rejectWithValue(error.message || 'Failed to fetch profile')
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message)
+      }
+      return rejectWithValue('An unknown error occurred')
     }
   }
 )
@@ -101,10 +113,13 @@ export const resetPassword = createAsyncThunk<{ message: string }, string>(
   'auth/resetPassword',
   async (email, { rejectWithValue }) => {
     try {
-      await api.resetPassword(email)
+      await authApi.resetPassword(email)
       return { message: 'Password reset link sent to your email!' }
-    } catch (error: any) {
-      return rejectWithValue(error.message || 'Password reset failed')
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message)
+      }
+      return rejectWithValue('An unknown error occurred')
     }
   }
 )

@@ -40,7 +40,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="Budget Tracker" />
         <script dangerouslySetInnerHTML={{
           __html: `
-            if ('serviceWorker' in navigator) {
+            if (typeof window !== 'undefined' && '${process.env.NODE_ENV}' === 'production' && 'serviceWorker' in navigator) {
               window.addEventListener('load', function() {
                 navigator.serviceWorker.register('/sw.js')
                   .then(function(registration) {
