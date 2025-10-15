@@ -2,6 +2,13 @@ import { Tokens, RequestOptions } from './types'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'
 
+// Store reference for accessing Redux state
+let storeInstance: any = null
+
+export const setStoreInstance = (store: any) => {
+  storeInstance = store
+}
+
 export class BaseApiClient {
   protected baseURL: string
 
@@ -10,30 +17,47 @@ export class BaseApiClient {
   }
 
   async getTokens(): Promise<Tokens | null> {
+    // First try to get from Redux store
+    if (storeInstance) {
+      return storeInstance.getState().auth.tokens
+    }
+
+    // Fallback to localStorage for initial load
     if (typeof window === 'undefined') return null
 
-    const tokens = localStorage.getItem('tokens')
-    if (!tokens) return null
-
-    try {
-      return JSON.parse(tokens)
-    } catch {
-      return null
+    // Check redux-persist storage
+    const persistRoot = localStorage.getItem('persist:root')
+    if (persistRoot) {
+      try {
+        const parsed = JSON.parse(persistRoot)
+        if (parsed.auth) {
+          const auth = JSON.parse(parsed.auth)
+          return auth.tokens
+        }
+      } catch {
+        return null
+      }
     }
+
+    return null
   }
 
   async setTokens(tokens: Tokens): Promise<void> {
-    if (typeof window === 'undefined') return
-    localStorage.setItem('tokens', JSON.stringify(tokens))
+    // Redux will handle this through the store
+    // We don't manually set localStorage anymore
+    if (storeInstance) {
+      storeInstance.dispatch({ type: 'auth/setTokens', payload: tokens })
+    }
   }
 
   async clearTokens(): Promise<void> {
-    if (typeof window === 'undefined') return
-    localStorage.removeItem('tokens')
-    localStorage.removeItem('user')
+    // Redux will handle this through the store
+    if (storeInstance) {
+      storeInstance.dispatch({ type: 'auth/clearAuth' })
+    }
   }
 
-  async refreshAccessToken(): Promise<Tokens> {
+  async refreshAccessToken(): Promise<string> {
     const tokens = await this.getTokens()
     if (!tokens?.refresh) throw new Error('No refresh token')
 
@@ -46,13 +70,9 @@ export class BaseApiClient {
     if (!response.ok) throw new Error('Token refresh failed')
 
     const data = await response.json()
-    const newTokens: Tokens = {
-      access: data.access,
-      refresh: tokens.refresh, // keep existing refresh
-    }
-
+    const newTokens = { ...tokens, access: data.access }
     await this.setTokens(newTokens)
-    return newTokens
+    return data.access
   }
 
   async request<T = unknown>(endpoint: string, options: RequestOptions = {}): Promise<T> {
@@ -76,8 +96,8 @@ export class BaseApiClient {
     // Try to refresh token if 401
     if (response.status === 401 && tokens?.refresh && !options.skipAuth) {
       try {
-        const newTokens = await this.refreshAccessToken()
-        ;(config.headers as Record<string, string>)['Authorization'] = `Bearer ${newTokens.access}`
+        const newAccessToken = await this.refreshAccessToken()
+        ;(config.headers as Record<string, string>)['Authorization'] = `Bearer ${newAccessToken}`
         response = await fetch(`${this.baseURL}${endpoint}`, config)
       } catch {
         await this.clearTokens()

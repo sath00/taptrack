@@ -10,7 +10,7 @@ import Input from '../components/ui/Input'
 import SheetCard from '../components/ui/SheetCard'
 import CreateSheetModal from '../components/ui/CreateSheetModal'
 import EditSheetModal from '../components/ui/EditSheetModal'
-import { expensesApi } from '@/lib/api/expenses' // ✅ import your new API client
+import { expensesApi } from '@/lib/api/expenses'
 
 interface ExpenseSheet {
   id: string

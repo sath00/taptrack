@@ -13,10 +13,8 @@ export class AuthApiClient extends BaseApiClient {
       skipAuth: true
     })
 
+    // Let Redux handle the storage
     await this.setTokens(data.tokens)
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('user', JSON.stringify(data.user))
-    }
     return data
   }
 
@@ -27,10 +25,8 @@ export class AuthApiClient extends BaseApiClient {
       skipAuth: true
     })
 
+    // Let Redux handle the storage
     await this.setTokens(data.tokens)
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('user', JSON.stringify(data.user))
-    }
     return data
   }
 
