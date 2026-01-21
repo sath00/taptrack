@@ -1,16 +1,27 @@
 'use client'
 
-import { Provider } from 'react-redux'
+import { Provider, useStore } from 'react-redux'
 import { PersistGate } from 'redux-persist/integration/react'
 import { makeStore, AppStore } from '@/store/store'
-import { useRef, ReactNode } from 'react'
+import { setStoreInstance } from '@/lib/api/base'
+import { useRef, useEffect, ReactNode } from 'react'
 
 interface ReduxProviderProps {
   children: ReactNode
 }
 
+function StoreInitializer() {
+  const store = useStore() as AppStore
+
+  useEffect(() => {
+    setStoreInstance(store)
+  }, [store])
+
+  return null
+}
+
 export default function ReduxProvider({ children }: ReduxProviderProps) {
-  const storeRef = useRef<AppStore | undefined>(undefined)
+  const storeRef = useRef<AppStore>(null)
 
   if (!storeRef.current) {
     storeRef.current = makeStore()
@@ -26,6 +37,7 @@ export default function ReduxProvider({ children }: ReduxProviderProps) {
         }
         persistor={storeRef.current.__persistor}
       >
+        <StoreInitializer />
         {children}
       </PersistGate>
     </Provider>

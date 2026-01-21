@@ -11,6 +11,7 @@ import SheetCard from '../components/ui/SheetCard'
 import CreateSheetModal from '../components/ui/CreateSheetModal'
 import EditSheetModal from '../components/ui/EditSheetModal'
 import { expensesApi } from '@/lib/api/expenses'
+import { withAuth } from '../components/auth/withAuth'
 
 interface ExpenseSheet {
   id: string
@@ -21,7 +22,7 @@ interface ExpenseSheet {
   is_pinned?: boolean
 }
 
-export default function Dashboard() {
+function Dashboard() {
   const dispatch = useDispatch()
   const { user, loading: authLoading } = useAuth()
   const [sheets, setSheets] = useState<ExpenseSheet[]>([])
@@ -250,3 +251,5 @@ export default function Dashboard() {
     </div>
   )
 }
+
+export default withAuth(Dashboard)

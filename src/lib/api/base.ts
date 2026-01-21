@@ -1,11 +1,21 @@
 import { Tokens, RequestOptions } from './types'
+import { isTokenExpired } from '@/lib/utils/jwt'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'
 
 // Store reference for accessing Redux state
-let storeInstance: any = null
+interface StoreInstance {
+  getState: () => {
+    auth: {
+      tokens: Tokens | null
+    }
+  }
+  dispatch: (action: { type: string; payload?: unknown }) => void
+}
 
-export const setStoreInstance = (store: any) => {
+let storeInstance: StoreInstance | null = null
+
+export const setStoreInstance = (store: StoreInstance) => {
   storeInstance = store
 }
 
@@ -21,10 +31,10 @@ export class BaseApiClient {
     if (storeInstance) {
       return storeInstance.getState().auth.tokens
     }
-
+    
     // Fallback to localStorage for initial load
     if (typeof window === 'undefined') return null
-
+    
     // Check redux-persist storage
     const persistRoot = localStorage.getItem('persist:root')
     if (persistRoot) {
@@ -38,7 +48,7 @@ export class BaseApiClient {
         return null
       }
     }
-
+    
     return null
   }
 
@@ -75,8 +85,32 @@ export class BaseApiClient {
     return data.access
   }
 
+
+  /**
+   * Ensure your security credentials are valid before the request is sent.
+
+   * @param endpoint
+   * @param options
+   * @returns
+   */
   async request<T = unknown>(endpoint: string, options: RequestOptions = {}): Promise<T> {
-    const tokens = await this.getTokens()
+    let tokens = await this.getTokens()
+
+    // Check if access token is expired and refresh if needed (only if we need auth)
+    if (tokens?.access && !options.skipAuth && isTokenExpired(tokens.access)) {
+      try {
+        // Token is expired, try to refresh
+        await this.refreshAccessToken()
+        tokens = await this.getTokens() // Get updated tokens
+      } catch (error) {
+        // Refresh failed, clear tokens and redirect
+        await this.clearTokens()
+        if (typeof window !== 'undefined') {
+          window.location.href = '/auth'
+        }
+        throw new Error('Session expired. Please login again.')
+      }
+    }
 
     const config: RequestInit = {
       ...options,
@@ -93,11 +127,12 @@ export class BaseApiClient {
 
     let response = await fetch(`${this.baseURL}${endpoint}`, config)
 
-    // Try to refresh token if 401
+    // Try to refresh token if 401 (as a fallback)
     if (response.status === 401 && tokens?.refresh && !options.skipAuth) {
       try {
-        const newAccessToken = await this.refreshAccessToken()
-        ;(config.headers as Record<string, string>)['Authorization'] = `Bearer ${newAccessToken}`
+        await this.refreshAccessToken()
+        tokens = await this.getTokens()
+        ;(config.headers as Record<string, string>)['Authorization'] = `Bearer ${tokens?.access}`
         response = await fetch(`${this.baseURL}${endpoint}`, config)
       } catch {
         await this.clearTokens()
