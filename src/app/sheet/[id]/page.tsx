@@ -2,25 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/hooks/useAuth'
-import { supabase } from '@/lib/supabase'
+import { expensesApi } from '@/lib/api/expenses'
 import { useRouter, useParams } from 'next/navigation'
-import { ArrowLeft, Plus, Download, Filter, MoreVertical, Edit2, Trash2 } from 'lucide-react'
-
-interface ExpenseSheet {
-  id: string
-  name: string
-  created_at: string
-}
-
-interface Expense {
-  id: string
-  name: string
-  category: string
-  amount: number
-  status: string
-  expense_date: string
-  created_at: string
-}
+import { ArrowLeft, Plus, Download, Edit2, Trash2 } from 'lucide-react'
+import type { ExpenseSheet, Expense } from '@/lib/api/types'
 
 interface CategoryTotal {
   category: string
@@ -56,26 +41,12 @@ export default function SheetDetailPage() {
 
     try {
       // Fetch sheet info
-      const { data: sheetData, error: sheetError } = await supabase
-        .from('expense_sheets')
-        .select('*')
-        .eq('id', sheetId)
-        .eq('user_id', user.id)
-        .single()
-
-      if (sheetError) throw sheetError
+      const sheetData = await expensesApi.getSheet(sheetId)
       setSheet(sheetData)
 
       // Fetch expenses
-      const { data: expensesData, error: expensesError } = await supabase
-        .from('expenses')
-        .select('*')
-        .eq('sheet_id', sheetId)
-        .eq('user_id', user.id)
-        .order('expense_date', { ascending: false })
-
-      if (expensesError) throw expensesError
-      setExpenses(expensesData || [])
+      const expensesData = await expensesApi.getExpenses(sheetId)
+      setExpenses(expensesData)
 
     } catch (error) {
       console.error('Error fetching sheet data:', error)
@@ -89,14 +60,7 @@ export default function SheetDetailPage() {
     if (!confirm('Are you sure you want to delete this expense?')) return
 
     try {
-      const { error } = await supabase
-        .from('expenses')
-        .delete()
-        .eq('id', expenseId)
-        .eq('user_id', user?.id)
-
-      if (error) throw error
-      
+      await expensesApi.deleteExpense(expenseId)
       // Remove from local state
       setExpenses(expenses.filter(e => e.id !== expenseId))
     } catch (error) {

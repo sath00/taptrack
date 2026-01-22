@@ -57,24 +57,30 @@ export interface Expense {
   id: string
   sheet_id: string
   user_id: string
-  amount: string | number
+  amount: number
   category: string
   description?: string
   date: string
   created_at: string
   updated_at: string
+  name: string
+  status: string
+  expense_date: string
 }
 
 export interface CreateExpenseData {
-  sheet_id: string
-  amount: string | number
+  sheet: number
+  amount: number
   category: string
   description?: string
   date?: string
+  name: string
+  status: string
+  expense_date: string
 }
 
 export interface UpdateExpenseData {
-  amount?: string | number
+  amount?: number
   category?: string
   description?: string
   date?: string
