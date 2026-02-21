@@ -86,7 +86,7 @@ export class BaseApiClient {
     }
   }
 
-  async refreshAccessToken(): Promise<string> {
+  async refreshAccessToken(): Promise<Tokens> {
     const tokens = await this.getTokens()
     if (!tokens?.refresh) throw new Error('No refresh token')
 
@@ -101,7 +101,7 @@ export class BaseApiClient {
     const data = await response.json()
     const newTokens = { ...tokens, access: data.access }
     await this.setTokens(newTokens)
-    return data.access
+    return newTokens
   }
 
 
@@ -122,7 +122,7 @@ export class BaseApiClient {
         // Token is expired, try to refresh
         await this.refreshAccessToken()
         tokens = await this.getTokens() // Get updated tokens
-      } catch (error) {
+      } catch {
         // Refresh failed, clear tokens and redirect
         await this.clearTokens()
         if (typeof window !== 'undefined') {

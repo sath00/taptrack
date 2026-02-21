@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { expensesApi } from '@/lib/api/expenses'
 import { useRouter, useParams } from 'next/navigation'
@@ -25,19 +25,7 @@ export default function SheetDetailPage() {
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<string>('all')
   const [sortBy, setSortBy] = useState<'date' | 'amount' | 'category'>('date')
-  const [editingExpense, setEditingExpense] = useState<string | null>(null)
-
-  useEffect(() => {
-    if (authLoading) return
-    if (!user) {
-      router.push('/signin')
-      return
-    }
-
-    fetchSheetData()
-  }, [user, authLoading, router, sheetId])
-
-  const fetchSheetData = async () => {
+  const fetchSheetData = useCallback(async () => {
     if (!user || !sheetId) return
 
     try {
@@ -55,7 +43,17 @@ export default function SheetDetailPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [router, sheetId, user])
+
+  useEffect(() => {
+    if (authLoading) return
+    if (!user) {
+      router.push('/signin')
+      return
+    }
+
+    fetchSheetData()
+  }, [authLoading, fetchSheetData, router, user])
 
   const deleteExpense = async (expenseId: string) => {
     if (!confirm('Are you sure you want to delete this expense?')) return
@@ -342,7 +340,7 @@ export default function SheetDetailPage() {
                       <td className="px-4 py-3 text-center">
                         <div className="flex items-center justify-center gap-1">
                           <Button
-                            onClick={() => setEditingExpense(expense.id)}
+                            onClick={() => alert('Edit feature coming soon')}
                             variant="ghost"
                             size="sm"
                             className="!p-1 !text-tertiary hover:!text-link"

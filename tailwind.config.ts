@@ -44,18 +44,5 @@ export default {
       },
     },
   },
-  variants: {
-    extend: {
-      backgroundColor: ['hover', 'disabled'],
-      borderColor: ['hover', 'disabled'],
-      textColor: ['hover', 'disabled'],
-    },
-  },
-  safelist: [
-    'bg-brand', 'hover:bg-brand-hover', 'disabled:bg-brand',
-    'bg-primary', 'hover:bg-secondary-hover', 'disabled:bg-disabled',
-    'border-border-secondary', 'hover:border-border-secondary', 'disabled:border-disabled',
-    'text-primary', 'text-secondary', 'hover:text-primary', 'disabled:text-secondary',
-  ],
   plugins: [],
 } satisfies Config;

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { useRouter } from 'next/navigation'
 import { Plus, FileText, Pin, Edit2 } from 'lucide-react'
@@ -31,17 +31,8 @@ function Dashboard() {
   const [searchQuery, setSearchQuery] = useState('')
   const router = useRouter()
 
-  useEffect(() => {
-    if (authLoading) return
-    if (!user) {
-      router.push('/signin')
-      return
-    }
-    fetchSheets()
-  }, [user, authLoading, router])
-
   // ✅ Fetch sheets using your new API
-  const fetchSheets = async () => {
+  const fetchSheets = useCallback(async () => {
     if (!user) return
     try {
       const data = await expensesApi.getSheets(searchQuery)
@@ -51,7 +42,16 @@ function Dashboard() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [searchQuery, user])
+
+  useEffect(() => {
+    if (authLoading) return
+    if (!user) {
+      router.push('/signin')
+      return
+    }
+    fetchSheets()
+  }, [authLoading, fetchSheets, router, user])
 
   // ✅ Create sheet
   const createSheet = async (name: string) => {

@@ -3,7 +3,6 @@ import { Pin, Edit2, FileText, Plus } from 'lucide-react'
 import Button from './Button'
 
 interface SheetCardProps {
-  id: string
   name: string
   expenseCount: number
   totalAmount: number
@@ -15,7 +14,6 @@ interface SheetCardProps {
 }
 
 const SheetCard: React.FC<SheetCardProps> = ({
-  id,
   name,
   expenseCount,
   totalAmount,

@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { createWrapper } from 'next-redux-wrapper'
-import { persistStore, persistReducer, Persistor } from 'redux-persist'
+import { persistStore, persistReducer } from 'redux-persist'
 import storage from './storage'
 import { combineReducers } from '@reduxjs/toolkit'
 import authSlice from './slices/authSlice'

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { expensesApi } from '@/lib/api/expenses'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -34,33 +34,18 @@ export default function InputPage() {
   const [selectedSheetId, setSelectedSheetId] = useState<string>('')
   const [recentExpenses, setRecentExpenses] = useState<Expense[]>([])
 
-  useEffect(() => {
-    if (authLoading) return
-    if (!user) {
-      router.push('/signin')
-      return
+  const fetchRecentExpenses = useCallback(async (sheetId: string) => {
+    if (!user || !sheetId) return
+
+    try {
+      const data = await expensesApi.getRecentExpenses(sheetId, 5)
+      setRecentExpenses(data)
+    } catch (error) {
+      console.error('Error fetching recent expenses:', error)
     }
+  }, [user])
 
-    fetchSheets()
-  }, [user, authLoading, router])
-
-  useEffect(() => {
-    // Get sheet ID from URL params
-    const sheetId = searchParams.get('sheet')
-    if (sheetId) {
-      setSelectedSheetId(sheetId)
-      fetchRecentExpenses(sheetId)
-    }
-  }, [searchParams])
-
-  useEffect(() => {
-    // Auto-focus name input
-    if (nameInputRef.current) {
-      nameInputRef.current.focus()
-    }
-  }, [])
-
-  const fetchSheets = async () => {
+  const fetchSheets = useCallback(async () => {
     if (!user) return
 
     try {
@@ -75,18 +60,33 @@ export default function InputPage() {
     } catch (error) {
       console.error('Error fetching sheets:', error)
     }
-  }
+  }, [fetchRecentExpenses, selectedSheetId, user])
 
-  const fetchRecentExpenses = async (sheetId: string) => {
-    if (!user || !sheetId) return
-
-    try {
-      const data = await expensesApi.getRecentExpenses(sheetId, 5)
-      setRecentExpenses(data)
-    } catch (error) {
-      console.error('Error fetching recent expenses:', error)
+  useEffect(() => {
+    if (authLoading) return
+    if (!user) {
+      router.push('/signin')
+      return
     }
-  }
+
+    fetchSheets()
+  }, [authLoading, fetchSheets, router, user])
+
+  useEffect(() => {
+    // Get sheet ID from URL params
+    const sheetId = searchParams.get('sheet')
+    if (sheetId) {
+      setSelectedSheetId(sheetId)
+      fetchRecentExpenses(sheetId)
+    }
+  }, [fetchRecentExpenses, searchParams])
+
+  useEffect(() => {
+    // Auto-focus name input
+    if (nameInputRef.current) {
+      nameInputRef.current.focus()
+    }
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
