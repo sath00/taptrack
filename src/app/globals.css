@@ -227,6 +227,44 @@ body {
   cursor: not-allowed;
 }
 
+.btn-text {
+  background-color: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+}
+
+.btn-text:hover {
+  background-color: transparent;
+  color: var(--color-primary);
+  box-shadow: none;
+}
+
+.btn-text:disabled {
+  background-color: transparent;
+  color: var(--color-text-disabled);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.btn-text-danger {
+  background-color: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+}
+
+.btn-text-danger:hover {
+  background-color: transparent;
+  color: var(--color-error);
+  box-shadow: none;
+}
+
+.btn-text-danger:disabled {
+  background-color: transparent;
+  color: var(--color-text-disabled);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
 .btn-danger {
   background-color: var(--color-error);
   color: white;

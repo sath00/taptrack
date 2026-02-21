@@ -1,6 +1,6 @@
 import React from 'react';
 
-type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'success'
+type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'success' | 'text' | 'textDanger'
 type ButtonSize = 'sm' | 'md' | 'lg'
 
 interface ButtonProps {
@@ -53,15 +53,19 @@ const Button: React.FC<ButtonProps> = ({
     ghost: 'btn-ghost',
     danger: 'btn-danger shadow-sm',
     success: 'btn-success shadow-sm',
+    text: 'btn-text',
+    textDanger: 'btn-text-danger',
   };
 
-  const loadingSpinnerColor: Record<string, string> = {
+  const loadingSpinnerColor: Record<ButtonVariant, string> = {
     primary: 'border-white',
     secondary: 'border-brand',
     outline: 'border-brand',
     ghost: 'border-text-secondary',
     danger: 'border-white',
     success: 'border-white',
+    text: 'border-brand',
+    textDanger: 'border-error',
   };
 
   const currentVariantClasses = variantClasses[variant!];
