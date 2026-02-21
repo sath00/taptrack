@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactNode } from 'react'
+import { ReactNode, useState } from 'react'
 import Sidebar from './Sidebar'
 import Topbar from './Topbar'
 
@@ -29,9 +29,26 @@ export default function AppShell({
   addButtonLabel,
   searchPlaceholder,
 }: AppShellProps) {
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
+
   return (
     <div className="h-screen bg-disabled md:flex overflow-hidden">
       <Sidebar isLoggingOut={isLoggingOut} onLogout={onLogout} />
+      <Sidebar
+        mobile
+        mobileOpen={isMobileSidebarOpen}
+        onMobileClose={() => setIsMobileSidebarOpen(false)}
+        isLoggingOut={isLoggingOut}
+        onLogout={onLogout}
+      />
+      {isMobileSidebarOpen && (
+        <button
+          type="button"
+          aria-label="Close sidebar overlay"
+          className="md:hidden fixed inset-0 z-40 bg-black/30"
+          onClick={() => setIsMobileSidebarOpen(false)}
+        />
+      )}
 
       <main className="flex-1 flex flex-col min-h-0">
         <Topbar
@@ -42,6 +59,7 @@ export default function AppShell({
           showAddButton={showAddButton}
           addButtonLabel={addButtonLabel}
           searchPlaceholder={searchPlaceholder}
+          onMenuClick={() => setIsMobileSidebarOpen(true)}
           onLogout={onLogout}
           isLoggingOut={isLoggingOut}
         />

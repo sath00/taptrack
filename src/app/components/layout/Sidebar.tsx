@@ -1,6 +1,6 @@
 'use client'
 
-import { FileUser, LayoutDashboard, LogOut, User, Users, ChevronLeft, ChevronRight } from 'lucide-react'
+import { FileUser, LayoutDashboard, LogOut, User, Users, ChevronLeft, ChevronRight, X } from 'lucide-react'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import Button from '../ui/Button'
@@ -9,9 +9,18 @@ import { useState } from 'react'
 interface SidebarProps {
   isLoggingOut: boolean
   onLogout: () => void
+  mobile?: boolean
+  mobileOpen?: boolean
+  onMobileClose?: () => void
 }
 
-export default function Sidebar({ isLoggingOut, onLogout }: SidebarProps) {
+export default function Sidebar({
+  isLoggingOut,
+  onLogout,
+  mobile = false,
+  mobileOpen = false,
+  onMobileClose,
+}: SidebarProps) {
   const [isExpanded, setIsExpanded] = useState(true)
   const pathname = usePathname()
   const router = useRouter()
@@ -23,34 +32,59 @@ export default function Sidebar({ isLoggingOut, onLogout }: SidebarProps) {
   
   const navItemBaseClass = `group !justify-start !px-3 !py-3 font-medium
     hover:shadow-sm hover:translate-x-1 active:translate-x-0 transition-all duration-200`
+  const showLabels = isExpanded || mobile
+
+  const handleNavigate = (path: string) => {
+    router.push(path)
+    if (mobile) onMobileClose?.()
+  }
 
   return (
     <aside 
-      className={`hidden md:flex flex-col bg-tertiary border-r border-secondary transition-all duration-300 ease-in-out ${
-        isExpanded ? 'md:w-64 lg:w-72' : 'md:w-20'
-      }`}
+      className={
+        mobile
+          ? `md:hidden fixed inset-y-0 left-0 z-50 w-72 flex flex-col bg-tertiary border-r border-secondary transition-transform duration-300 ease-in-out ${
+              mobileOpen ? 'translate-x-0' : '-translate-x-full'
+            }`
+          : `hidden md:flex flex-col bg-tertiary border-r border-secondary transition-all duration-300 ease-in-out ${
+              isExpanded ? 'md:w-64 lg:w-72' : 'md:w-20'
+            }`
+      }
     >
       {/* Header */}
       <div className={`h-[82px] border-b border-secondary flex items-center ${
-        isExpanded ? 'px-4' : 'justify-center'
+        isExpanded || mobile ? 'px-4' : 'justify-center'
       }`}>
-        {isExpanded ? (
+        {isExpanded || mobile ? (
           <>
             <Image
               src="/logo_540x148.svg"
               alt="TapTrack"
               width={220}
               height={48}
+              className="mr-auto"
             />
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="!p-2 !min-w-0 hover:!bg-brand-light hover:scale-105 active:scale-95"
-              aria-label="Collapse sidebar"
-            >
-              <ChevronLeft size={20} />
-            </Button>
+            {mobile ? (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onMobileClose}
+                className="!p-2 !min-w-0 hover:!bg-brand-light"
+                aria-label="Close sidebar"
+              >
+                <X size={20} />
+              </Button>
+            ) : (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="!p-2 !min-w-0 hover:!bg-brand-light hover:scale-105 active:scale-95"
+                aria-label="Collapse sidebar"
+              >
+                <ChevronLeft size={20} />
+              </Button>
+            )}
           </>
         ) : (
           <button
@@ -80,11 +114,11 @@ export default function Sidebar({ isLoggingOut, onLogout }: SidebarProps) {
         <Button
           variant={isDashboardActive ? 'secondary' : 'ghost'}
           fullWidth
-          onClick={() => router.push('/dashboard')}
+          onClick={() => handleNavigate('/dashboard')}
           className={`${navItemBaseClass} ${
-            !isExpanded && '!justify-center hover:!translate-x-0'
+            !isExpanded && !mobile && '!justify-center hover:!translate-x-0'
           }`}
-          title={!isExpanded ? 'Dashboard' : undefined}
+          title={!isExpanded && !mobile ? 'Dashboard' : undefined}
         >
           <LayoutDashboard
             size={16}
@@ -92,7 +126,7 @@ export default function Sidebar({ isLoggingOut, onLogout }: SidebarProps) {
           />
           <span 
             className={`transition-all duration-300 ${
-              isExpanded ? 'opacity-100 ml-3' : 'opacity-0 w-0 overflow-hidden ml-0'
+              showLabels ? 'opacity-100 ml-3' : 'opacity-0 w-0 overflow-hidden ml-0'
             }`}
           >
             Dashboard
@@ -102,11 +136,11 @@ export default function Sidebar({ isLoggingOut, onLogout }: SidebarProps) {
         <Button
           variant={isPersonalActive ? 'secondary' : 'ghost'}
           fullWidth
-          onClick={() => router.push('/personal')}
+          onClick={() => handleNavigate('/personal')}
           className={`${navItemBaseClass} ${
-            !isExpanded && '!justify-center hover:!translate-x-0'
+            !isExpanded && !mobile && '!justify-center hover:!translate-x-0'
           }`}
-          title={!isExpanded ? 'Personal' : undefined}
+          title={!isExpanded && !mobile ? 'Personal' : undefined}
         >
           <FileUser
             size={16}
@@ -114,7 +148,7 @@ export default function Sidebar({ isLoggingOut, onLogout }: SidebarProps) {
           />
           <span 
             className={`transition-all duration-300 ${
-              isExpanded ? 'opacity-100 ml-3' : 'opacity-0 w-0 overflow-hidden ml-0'
+              showLabels ? 'opacity-100 ml-3' : 'opacity-0 w-0 overflow-hidden ml-0'
             }`}
           >
             Personal
@@ -124,11 +158,11 @@ export default function Sidebar({ isLoggingOut, onLogout }: SidebarProps) {
         <Button
           variant={isSharedActive ? 'secondary' : 'ghost'}
           fullWidth
-          onClick={() => router.push('/shared')}
+          onClick={() => handleNavigate('/shared')}
           className={`${navItemBaseClass} ${
-            !isExpanded && '!justify-center hover:!translate-x-0'
+            !isExpanded && !mobile && '!justify-center hover:!translate-x-0'
           }`}
-          title={!isExpanded ? 'Shared' : undefined}
+          title={!isExpanded && !mobile ? 'Shared' : undefined}
         >
           <Users
             size={16}
@@ -136,7 +170,7 @@ export default function Sidebar({ isLoggingOut, onLogout }: SidebarProps) {
           />
           <span 
             className={`transition-all duration-300 ${
-              isExpanded ? 'opacity-100 ml-3' : 'opacity-0 w-0 overflow-hidden ml-0'
+              showLabels ? 'opacity-100 ml-3' : 'opacity-0 w-0 overflow-hidden ml-0'
             }`}
           >
             Shared
@@ -152,14 +186,14 @@ export default function Sidebar({ isLoggingOut, onLogout }: SidebarProps) {
           className={`group !justify-start !px-3 !py-3 !text-text-primary
             hover:!bg-brand-light hover:!text-link hover:translate-x-1
             active:translate-x-0 transition-all duration-200 ${
-            !isExpanded && '!justify-center hover:!translate-x-0'
+            !isExpanded && !mobile && '!justify-center hover:!translate-x-0'
           }`}
-          title={!isExpanded ? 'Profile' : undefined}
+          title={!isExpanded && !mobile ? 'Profile' : undefined}
         >
           <User size={16} className="transition-transform group-hover:scale-110 group-hover:rotate-6" />
           <span 
             className={`transition-all duration-300 ${
-              isExpanded ? 'opacity-100 ml-3' : 'opacity-0 w-0 overflow-hidden ml-0'
+              showLabels ? 'opacity-100 ml-3' : 'opacity-0 w-0 overflow-hidden ml-0'
             }`}
           >
             Profile
@@ -167,21 +201,24 @@ export default function Sidebar({ isLoggingOut, onLogout }: SidebarProps) {
         </Button>
         
         <Button
-          onClick={onLogout}
+          onClick={() => {
+            onLogout()
+            if (mobile) onMobileClose?.()
+          }}
           loading={isLoggingOut}
           variant="textDanger"
           fullWidth
           className={`group !justify-start !px-3 !py-3
             hover:!bg-red-50 hover:shadow-sm hover:translate-x-1
             active:translate-x-0 transition-all duration-200 ${
-            !isExpanded && '!justify-center hover:!translate-x-0'
+            !isExpanded && !mobile && '!justify-center hover:!translate-x-0'
           }`}
-          title={!isExpanded ? 'Logout' : undefined}
+          title={!isExpanded && !mobile ? 'Logout' : undefined}
         >
           <LogOut size={16} className="transition-transform group-hover:scale-110 group-hover:rotate-6" />
           <span 
             className={`transition-all duration-300 ${
-              isExpanded ? 'opacity-100 ml-3' : 'opacity-0 w-0 overflow-hidden ml-0'
+              showLabels ? 'opacity-100 ml-3' : 'opacity-0 w-0 overflow-hidden ml-0'
             }`}
           >
             Logout

@@ -1,6 +1,6 @@
 'use client'
 
-import { LogOut, Plus, User } from 'lucide-react'
+import { LogOut, Menu, Plus, User } from 'lucide-react'
 import Button from '../ui/Button'
 import Input from '../ui/Input'
 
@@ -12,6 +12,7 @@ interface TopbarProps {
   showAddButton?: boolean
   addButtonLabel?: string
   searchPlaceholder?: string
+  onMenuClick?: () => void
   onLogout: () => void
   isLoggingOut: boolean
 }
@@ -24,6 +25,7 @@ export default function Topbar({
   showAddButton = true,
   addButtonLabel = 'Add new sheet',
   searchPlaceholder = 'Search sheets...',
+  onMenuClick,
   onLogout,
   isLoggingOut,
 }: TopbarProps) {
@@ -31,7 +33,16 @@ export default function Topbar({
     <>
       {/* Mobile top bar */}
       <div className="md:hidden px-4 py-4 border-b border-secondary bg-primary flex items-center justify-between">
-        <h2 className="text-xl font-bold tracking-tight">
+        <Button
+          variant="text"
+          size="sm"
+          aria-label="Open sidebar"
+          className="!p-2 !min-w-0"
+          onClick={onMenuClick}
+        >
+          <Menu size={18} />
+        </Button>
+        <h2 className="text-xl font-bold tracking-tight flex-1 text-center">
           <span className="text-primary">Tap</span>
           <span className="text-text-primary">Track</span>
         </h2>
