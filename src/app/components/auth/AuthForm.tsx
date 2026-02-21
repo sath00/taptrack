@@ -8,6 +8,7 @@ import { login, register, resetPassword } from '@/store/slices/authSlice'
 import { useAppDispatch } from '@/store/hooks'
 import Button from '@/app/components/ui/Button'
 import Input from '@/app/components/ui/Input'
+import Image from 'next/image'
 
 type AuthMode = 'signin' | 'signup'
 
@@ -107,9 +108,16 @@ export default function AuthForm({ mode }: AuthFormProps) {
   return (
     <div className="min-h-screen bg-secondary flex items-center justify-center p-4">
       <div className="bg-primary rounded-xl shadow-xl w-full max-w-md p-8 border border-secondary">
-        <h1 className="text-3xl font-bold text-primary text-center mb-2">
-          Budget Tracker
-        </h1>
+        <div className="flex justify-center">
+          <Image
+            src="/logo_540x148.svg"
+            alt="TapTrack"
+            width={540}
+            height={148}
+            className="w-[320px] h-auto max-w-none"
+            priority
+          />
+        </div>
         <p className="text-center text-secondary mb-8">Track smarter with your monthly plan.</p>
 
         <div className="flex mb-6 bg-tertiary rounded-lg p-1">
