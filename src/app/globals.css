@@ -56,6 +56,56 @@
   --foreground: #171717;
 }
 
+:root[data-theme='dark'] {
+  /* ===== PRIMARY BRAND COLORS ===== */
+  --color-primary: #F59E0B;
+  --color-primary-dark: #D97706;
+  --color-primary-light: rgba(245, 158, 11, 0.18);
+  --color-primary-accent: #92400E;
+
+  /* ===== SEMANTIC COLORS ===== */
+  --color-success: #34D399;
+  --color-error: #F87171;
+  --color-warning: #FBBF24;
+
+  /* ===== TEXT COLORS ===== */
+  --color-text-primary: #F9FAFB;
+  --color-text-secondary: #D1D5DB;
+  --color-text-tertiary: #9CA3AF;
+  --color-text-link: #FBBF24;
+  --color-text-disabled: #6B7280;
+
+  /* ===== BACKGROUND COLORS ===== */
+  --color-bg-primary: #111827;
+  --color-bg-secondary: #1F2937;
+  --color-bg-tertiary: #0F172A;
+  --color-bg-disabled: #0B1220;
+
+  /* ===== BORDER COLORS ===== */
+  --color-border-primary: #374151;
+  --color-border-secondary: #92400E;
+  --color-border-focus: #F59E0B;
+  --color-border-disabled: #1F2937;
+
+  /* ===== ICON COLORS ===== */
+  --color-icon-primary: #FBBF24;
+  --color-icon-secondary: #D1D5DB;
+  --color-icon-active: #FBBF24;
+  --color-icon-disabled: #6B7280;
+
+  /* ===== INTERACTIVE STATE COLORS ===== */
+  --color-hover: rgba(245, 158, 11, 0.12);
+  --color-active: #F59E0B;
+  --color-active-bg: rgba(245, 158, 11, 0.16);
+  --color-active-bg-strong: rgba(245, 158, 11, 0.22);
+  --color-focus: #FBBF24;
+  --color-pressed: #B45309;
+
+  /* Next.js defaults */
+  --background: #0B1220;
+  --foreground: #F9FAFB;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -63,17 +113,18 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
 }
 
 /* ===== UTILITY CLASSES ===== */
@@ -227,6 +278,44 @@ body {
   cursor: not-allowed;
 }
 
+.btn-text {
+  background-color: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+}
+
+.btn-text:hover {
+  background-color: transparent;
+  color: var(--color-primary);
+  box-shadow: none;
+}
+
+.btn-text:disabled {
+  background-color: transparent;
+  color: var(--color-text-disabled);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.btn-text-danger {
+  background-color: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+}
+
+.btn-text-danger:hover {
+  background-color: transparent;
+  color: var(--color-error);
+  box-shadow: none;
+}
+
+.btn-text-danger:disabled {
+  background-color: transparent;
+  color: var(--color-text-disabled);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
 .btn-danger {
   background-color: var(--color-error);
   color: white;
@@ -263,7 +352,7 @@ body {
 
 /* Form Elements */
 .form-input {
-  /* background-color: var(--color-bg-primary); */
+  background-color: var(--color-bg-primary);
   border: 1px solid var(--color-border-primary);
   color: var(--color-text-primary);
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
@@ -274,7 +363,7 @@ body {
 }
 
 .form-input:hover {
-  /* background-color: var(--color-bg-tertiary); */
+  background-color: var(--color-bg-tertiary);
 }
 
 .form-input:focus {

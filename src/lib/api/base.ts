@@ -1,7 +1,19 @@
 import { Tokens, RequestOptions } from './types'
 import { isTokenExpired } from '@/lib/utils/jwt'
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'
+const resolveApiUrl = (): string => {
+  const configuredUrl = process.env.NEXT_PUBLIC_API_URL?.trim()
+  if (!configuredUrl) return '/api'
+
+  // Keep browser requests same-origin so Next rewrites can proxy to Django.
+  if (configuredUrl.startsWith('http://') || configuredUrl.startsWith('https://')) {
+    return '/api'
+  }
+
+  return configuredUrl.endsWith('/') ? configuredUrl.slice(0, -1) : configuredUrl
+}
+
+const API_URL = resolveApiUrl()
 
 // Store reference for accessing Redux state
 interface StoreInstance {
@@ -24,6 +36,13 @@ export class BaseApiClient {
 
   constructor() {
     this.baseURL = API_URL
+  }
+
+  private normalizeEndpoint(endpoint: string): string {
+    const [path, query = ''] = endpoint.split('?')
+    const withLeadingSlash = path.startsWith('/') ? path : `/${path}`
+    const normalizedPath = withLeadingSlash.endsWith('/') ? withLeadingSlash : `${withLeadingSlash}/`
+    return query ? `${normalizedPath}?${query}` : normalizedPath
   }
 
   async getTokens(): Promise<Tokens | null> {
@@ -94,6 +113,7 @@ export class BaseApiClient {
    * @returns
    */
   async request<T = unknown>(endpoint: string, options: RequestOptions = {}): Promise<T> {
+    const normalizedEndpoint = this.normalizeEndpoint(endpoint)
     let tokens = await this.getTokens()
 
     // Check if access token is expired and refresh if needed (only if we need auth)
@@ -106,7 +126,7 @@ export class BaseApiClient {
         // Refresh failed, clear tokens and redirect
         await this.clearTokens()
         if (typeof window !== 'undefined') {
-          window.location.href = '/auth'
+          window.location.href = '/signin'
         }
         throw new Error('Session expired. Please login again.')
       }
@@ -125,7 +145,7 @@ export class BaseApiClient {
       (config.headers as Record<string, string>)['Authorization'] = `Bearer ${tokens.access}`
     }
 
-    let response = await fetch(`${this.baseURL}${endpoint}`, config)
+    let response = await fetch(`${this.baseURL}${normalizedEndpoint}`, config)
 
     // Try to refresh token if 401 (as a fallback)
     if (response.status === 401 && tokens?.refresh && !options.skipAuth) {
@@ -133,11 +153,11 @@ export class BaseApiClient {
         await this.refreshAccessToken()
         tokens = await this.getTokens()
         ;(config.headers as Record<string, string>)['Authorization'] = `Bearer ${tokens?.access}`
-        response = await fetch(`${this.baseURL}${endpoint}`, config)
+        response = await fetch(`${this.baseURL}${normalizedEndpoint}`, config)
       } catch {
         await this.clearTokens()
         if (typeof window !== 'undefined') {
-          window.location.href = '/auth'
+          window.location.href = '/signin'
         }
         throw new Error('Authentication failed')
       }

@@ -4,24 +4,24 @@ import './globals.css'
 import ReduxProvider from '@/providers/ReduxProvider'
 
 const inter = Inter({ subsets: ['latin'] })
+const swVersion = process.env.NEXT_PUBLIC_BUILD_ID || 'dev'
 
 export const metadata: Metadata = {
-  title: 'Budget Tracker',
+  title: 'TapTrack',
   description: 'Track your expenses with ease',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Budget Tracker'
+    title: 'TapTrack'
   },
 }
 
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
-  themeColor: '#3b82f6',
+  viewportFit: 'cover',
+  themeColor: '#F59E0B',
 }
 
 export default function RootLayout({
@@ -30,19 +30,42 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#3b82f6" />
-        <link rel="apple-touch-icon" href="/icon-192x192.png" />
+        <link rel="icon" href="/frog_120x120.svg" type="image/svg+xml" />
+        <meta name="theme-color" content="#F59E0B" />
+        <link rel="apple-touch-icon" href="/frog_120x120.svg" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="Budget Tracker" />
+        <meta name="apple-mobile-web-app-title" content="TapTrack" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function () {
+                try {
+                  var key = 'taptrack-theme';
+                  var saved = localStorage.getItem(key);
+                  var theme = (saved === 'light' || saved === 'dark')
+                    ? saved
+                    : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                  document.documentElement.setAttribute('data-theme', theme);
+                  var metaTheme = document.querySelector('meta[name=\"theme-color\"]');
+                  if (metaTheme) {
+                    metaTheme.setAttribute('content', theme === 'dark' ? '#0B1220' : '#F59E0B');
+                  }
+                } catch (_) {
+                  document.documentElement.setAttribute('data-theme', 'light');
+                }
+              })();
+            `,
+          }}
+        />
         <script dangerouslySetInnerHTML={{
           __html: `
             if (typeof window !== 'undefined' && '${process.env.NODE_ENV}' === 'production' && 'serviceWorker' in navigator) {
               window.addEventListener('load', function() {
-                navigator.serviceWorker.register('/sw.js')
+                navigator.serviceWorker.register('/sw.js?v=${swVersion}')
                   .then(function(registration) {
                     console.log('SW registered: ', registration);
                   })

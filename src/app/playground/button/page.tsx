@@ -33,13 +33,24 @@ export default function ButtonTestPage() {
           {/* Button Variants */}
           <section className="mb-10">
             <h2 className="text-xl font-semibold text-text-primary mb-4">Button Variants</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <Button variant="primary">Primary</Button>
               <Button variant="secondary">Secondary</Button>
               <Button variant="outline">Outline</Button>
               <Button variant="ghost">Ghost</Button>
               <Button variant="danger">Danger</Button>
               <Button variant="success">Success</Button>
+              <Button variant="text">Text</Button>
+              <Button variant="textDanger">Text Danger</Button>
+            </div>
+          </section>
+
+          {/* Text-only Variants */}
+          <section className="mb-10">
+            <h2 className="text-xl font-semibold text-text-primary mb-4">Text-only Variants</h2>
+            <div className="flex flex-wrap items-center gap-4">
+              <Button variant="text">View details</Button>
+              <Button variant="textDanger">Delete record</Button>
             </div>
           </section>
 
@@ -80,6 +91,37 @@ export default function ButtonTestPage() {
               <Button variant="ghost">
                 <Edit size={16} />
                 Settings
+              </Button>
+            </div>
+          </section>
+
+          {/* Icon Only Buttons */}
+          <section className="mb-10">
+            <h2 className="text-xl font-semibold text-text-primary mb-4">Icon Only Buttons</h2>
+            <div className="flex flex-wrap items-center gap-3">
+              <Button variant="primary" size="sm" aria-label="Add item" className="!p-2 !min-w-0">
+                <Plus size={16} />
+              </Button>
+              <Button variant="secondary" size="sm" aria-label="Download" className="!p-2 !min-w-0">
+                <Download size={16} />
+              </Button>
+              <Button variant="ghost" size="sm" aria-label="Delete" className="!p-2 !min-w-0">
+                <Trash2 size={16} />
+              </Button>
+              <Button variant="outline" size="sm" aria-label="Edit" className="!p-2 !min-w-0">
+                <Edit size={16} />
+              </Button>
+              <Button variant="success" size="sm" aria-label="Save" className="!p-2 !min-w-0">
+                <Save size={16} />
+              </Button>
+              <Button variant="danger" size="sm" aria-label="Delete" className="!p-2 !min-w-0">
+                <Trash2 size={16} />
+              </Button>
+              <Button variant="text" size="sm" aria-label="Delete" className="!p-2 !min-w-0">
+                <Trash2 size={16} />
+              </Button>
+              <Button variant="textDanger" size="sm" aria-label="Delete" className="!p-2 !min-w-0">
+                <Trash2 size={16} />
               </Button>
             </div>
           </section>

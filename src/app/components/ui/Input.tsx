@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils'
 
 // InputProps: Changed onChange to pass the value directly
 interface InputProps {
-  type?: string
+  type?: React.HTMLInputTypeAttribute
   placeholder?: string
   value?: string
   onChange?: (value: string) => void // Accepts string value instead of event object
@@ -23,6 +23,15 @@ interface InputProps {
   error?: boolean
   helperText?: string
   label?: string
+  inputRef?: React.Ref<HTMLInputElement>
+  min?: number | string
+  max?: number | string
+  step?: number | string
+  minLength?: number
+  maxLength?: number
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void
+  onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void
+  inputMode?: React.HTMLAttributes<HTMLInputElement>['inputMode']
 }
 
 // TextAreaProps: Changed onChange to pass the value directly
@@ -39,6 +48,7 @@ interface TextAreaProps {
   error?: boolean
   helperText?: string
   label?: string
+  onBlur?: (e: React.FocusEvent<HTMLTextAreaElement>) => void
 }
 
 // SelectProps: Changed onChange to pass the value directly
@@ -54,6 +64,7 @@ interface SelectProps {
   error?: boolean
   helperText?: string
   label?: string
+  onBlur?: (e: React.FocusEvent<HTMLSelectElement>) => void
 }
 
 // Reusable label and helper text component
@@ -103,7 +114,16 @@ const Input: React.FC<InputProps> = ({
   size = 'md',
   error = false,
   helperText,
-  label
+  label,
+  inputRef,
+  min,
+  max,
+  step,
+  minLength,
+  maxLength,
+  onBlur,
+  onFocus,
+  inputMode
 }) => {
   const sizeClasses = {
     sm: 'py-2',
@@ -134,6 +154,7 @@ const Input: React.FC<InputProps> = ({
           </div>
         )}
         <input
+          ref={inputRef}
           type={type}
           placeholder={placeholder}
           value={value}
@@ -146,6 +167,14 @@ const Input: React.FC<InputProps> = ({
           name={name}
           id={id}
           onKeyDown={onKeyDown}
+          min={min}
+          max={max}
+          step={step}
+          minLength={minLength}
+          maxLength={maxLength}
+          onBlur={onBlur}
+          onFocus={onFocus}
+          inputMode={inputMode}
         />
       </div>
     )
@@ -172,7 +201,8 @@ export const TextArea: React.FC<TextAreaProps> = ({
   rows = 4,
   error = false,
   helperText,
-  label
+  label,
+  onBlur
 }) => {
   const baseClasses = cn(
     'form-input',
@@ -196,6 +226,7 @@ export const TextArea: React.FC<TextAreaProps> = ({
         name={name}
         id={id}
         rows={rows}
+        onBlur={onBlur}
       />
     </FieldWrapper>
   )
@@ -214,7 +245,8 @@ export const Select: React.FC<SelectProps> = ({
   id,
   error = false,
   helperText,
-  label
+  label,
+  onBlur
 }) => {
   const baseClasses = cn(
     'form-input',
@@ -236,6 +268,7 @@ export const Select: React.FC<SelectProps> = ({
         required={required}
         name={name}
         id={id}
+        onBlur={onBlur}
       >
         {children}
       </select>

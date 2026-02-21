@@ -6,7 +6,7 @@ import { useAuth } from '@/hooks/useAuth'
 
 /**
  * Wrap page components to guard specific routes that require a user.
- * If no user is found, redirect to login/signup page.
+ * If no user is found, redirect to sign-in page.
  * @param Component 
  * @returns 
  */
@@ -20,7 +20,7 @@ export function withAuth<P extends object>(
 
     useEffect(() => {
       if (!loading && (!user || !tokens)) {
-        router.push('/auth')
+        router.push('/signin')
       }
     }, [user, loading, tokens, router])
 

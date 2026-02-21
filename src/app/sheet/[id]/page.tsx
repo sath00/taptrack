@@ -6,6 +6,7 @@ import { expensesApi } from '@/lib/api/expenses'
 import { useRouter, useParams } from 'next/navigation'
 import { ArrowLeft, Plus, Download, Edit2, Trash2 } from 'lucide-react'
 import type { ExpenseSheet, Expense } from '@/lib/api/types'
+import { Button, Select } from '../../components/ui'
 
 interface CategoryTotal {
   category: string
@@ -29,7 +30,7 @@ export default function SheetDetailPage() {
   useEffect(() => {
     if (authLoading) return
     if (!user) {
-      router.push('/auth')
+      router.push('/signin')
       return
     }
 
@@ -118,13 +119,13 @@ export default function SheetDetailPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'Paid':
-        return 'bg-green-100 text-green-800'
+        return 'bg-success/15 text-success'
       case 'To be paid':
-        return 'bg-yellow-100 text-yellow-800'
+        return 'bg-brand-light text-link'
       case 'Pending reimbursement':
-        return 'bg-blue-100 text-blue-800'
+        return 'bg-active text-link'
       default:
-        return 'bg-gray-100 text-gray-800'
+        return 'bg-disabled text-secondary'
     }
   }
 
@@ -155,10 +156,10 @@ export default function SheetDetailPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-disabled flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-2 text-gray-600">Loading...</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-2 text-secondary">Loading...</p>
         </div>
       </div>
     )
@@ -169,40 +170,46 @@ export default function SheetDetailPage() {
   const uniqueCategories = Array.from(new Set(expenses.map(e => e.category)))
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-disabled">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
+      <div className="bg-primary shadow-sm border-b border-border-primary">
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <button
+              <Button
                 onClick={() => router.push('/dashboard')}
-                className="p-2 hover:bg-gray-100 rounded-lg"
+                variant="ghost"
+                size="sm"
+                className="!p-2"
+                aria-label="Back to dashboard"
               >
                 <ArrowLeft size={20} />
-              </button>
+              </Button>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">{sheet?.name}</h1>
-                <p className="text-sm text-gray-600">
+                <h1 className="text-xl font-bold text-primary">{sheet?.name}</h1>
+                <p className="text-sm text-secondary">
                   {expenses.length} expenses • ₱{getTotalAmount().toFixed(2)}
                 </p>
               </div>
             </div>
             <div className="flex gap-2">
-              <button
+              <Button
                 onClick={exportToCSV}
-                className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+                variant="ghost"
+                size="sm"
+                className="!p-2 !text-secondary"
                 title="Export to CSV"
+                aria-label="Export to CSV"
               >
                 <Download size={20} />
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => router.push(`/input?sheet=${sheetId}`)}
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 flex items-center gap-2"
+                className="px-4 py-2"
               >
                 <Plus size={20} />
                 <span className="hidden sm:inline">Add Expense</span>
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -211,68 +218,68 @@ export default function SheetDetailPage() {
       <div className="max-w-4xl mx-auto p-4">
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div className="bg-white rounded-lg shadow-sm border p-4">
-            <h3 className="text-sm font-medium text-gray-600">Total Expenses</h3>
-            <p className="text-2xl font-bold text-gray-900">₱{getTotalAmount().toFixed(2)}</p>
+          <div className="bg-primary rounded-lg shadow-sm border border-border-primary p-4">
+            <h3 className="text-sm font-medium text-secondary">Total Expenses</h3>
+            <p className="text-2xl font-bold text-primary">₱{getTotalAmount().toFixed(2)}</p>
           </div>
-          <div className="bg-white rounded-lg shadow-sm border p-4">
-            <h3 className="text-sm font-medium text-gray-600">Number of Items</h3>
-            <p className="text-2xl font-bold text-gray-900">{expenses.length}</p>
+          <div className="bg-primary rounded-lg shadow-sm border border-border-primary p-4">
+            <h3 className="text-sm font-medium text-secondary">Number of Items</h3>
+            <p className="text-2xl font-bold text-primary">{expenses.length}</p>
           </div>
-          <div className="bg-white rounded-lg shadow-sm border p-4">
-            <h3 className="text-sm font-medium text-gray-600">Top Category</h3>
-            <p className="text-lg font-bold text-gray-900">
+          <div className="bg-primary rounded-lg shadow-sm border border-border-primary p-4">
+            <h3 className="text-sm font-medium text-secondary">Top Category</h3>
+            <p className="text-lg font-bold text-primary">
               {categoryTotals.length > 0 ? categoryTotals[0].category : 'None'}
             </p>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-secondary">
               {categoryTotals.length > 0 ? `₱${categoryTotals[0].total.toFixed(2)}` : ''}
             </p>
           </div>
         </div>
 
         {/* Filters and Sort */}
-        <div className="bg-white rounded-lg shadow-sm border p-4 mb-6">
+        <div className="bg-primary rounded-lg shadow-sm border border-border-primary p-4 mb-6">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Filter by Category</label>
-              <select
+              <Select
+                label="Filter by Category"
                 value={filter}
-                onChange={(e) => setFilter(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                onChange={setFilter}
+                className="py-2"
               >
                 <option value="all">All Categories</option>
                 {uniqueCategories.map((category) => (
                   <option key={category} value={category}>{category}</option>
                 ))}
-              </select>
+              </Select>
             </div>
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Sort by</label>
-              <select
+              <Select
+                label="Sort by"
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as 'date' | 'amount' | 'category')}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                onChange={(value) => setSortBy(value as 'date' | 'amount' | 'category')}
+                className="py-2"
               >
                 <option value="date">Date (Newest first)</option>
                 <option value="amount">Amount (Highest first)</option>
                 <option value="category">Category</option>
-              </select>
+              </Select>
             </div>
           </div>
         </div>
 
         {/* Category Breakdown */}
         {categoryTotals.length > 0 && (
-          <div className="bg-white rounded-lg shadow-sm border p-4 mb-6">
-            <h3 className="font-medium text-gray-900 mb-3">Category Breakdown</h3>
+          <div className="bg-primary rounded-lg shadow-sm border border-border-primary p-4 mb-6">
+            <h3 className="font-medium text-primary mb-3">Category Breakdown</h3>
             <div className="space-y-2">
               {categoryTotals.map((categoryTotal) => (
                 <div key={categoryTotal.category} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="text-gray-900">{categoryTotal.category}</span>
-                    <span className="text-sm text-gray-500">({categoryTotal.count} items)</span>
+                    <span className="text-primary">{categoryTotal.category}</span>
+                    <span className="text-sm text-tertiary">({categoryTotal.count} items)</span>
                   </div>
-                  <span className="font-medium text-gray-900">₱{categoryTotal.total.toFixed(2)}</span>
+                  <span className="font-medium text-primary">₱{categoryTotal.total.toFixed(2)}</span>
                 </div>
               ))}
             </div>
@@ -280,50 +287,51 @@ export default function SheetDetailPage() {
         )}
 
         {/* Expenses Table */}
-        <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
-          <div className="px-4 py-3 border-b">
-            <h3 className="font-medium text-gray-900">
+        <div className="bg-primary rounded-lg shadow-sm border border-border-primary overflow-hidden">
+          <div className="px-4 py-3 border-b border-border-primary">
+            <h3 className="font-medium text-primary">
               Expenses {filter !== 'all' && `• ${filter}`}
-              <span className="text-sm text-gray-500 ml-2">({filteredExpenses.length} items)</span>
+              <span className="text-sm text-tertiary ml-2">({filteredExpenses.length} items)</span>
             </h3>
           </div>
 
           {filteredExpenses.length === 0 ? (
             <div className="p-8 text-center">
-              <p className="text-gray-600">No expenses found</p>
+              <p className="text-secondary">No expenses found</p>
               {filter !== 'all' && (
-                <button
+                <Button
                   onClick={() => setFilter('all')}
-                  className="mt-2 text-blue-500 hover:text-blue-600"
+                  variant="ghost"
+                  className="mt-2 !text-link"
                 >
                   Show all expenses
-                </button>
+                </Button>
               )}
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50">
+                <thead className="bg-tertiary">
                   <tr>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Date</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Name</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-900">Category</th>
-                    <th className="px-4 py-3 text-right text-sm font-medium text-gray-900">Amount</th>
-                    <th className="px-4 py-3 text-center text-sm font-medium text-gray-900">Status</th>
-                    <th className="px-4 py-3 text-center text-sm font-medium text-gray-900">Actions</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-primary">Date</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-primary">Name</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-primary">Category</th>
+                    <th className="px-4 py-3 text-right text-sm font-medium text-primary">Amount</th>
+                    <th className="px-4 py-3 text-center text-sm font-medium text-primary">Status</th>
+                    <th className="px-4 py-3 text-center text-sm font-medium text-primary">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
+                <tbody className="divide-y divide-border-primary">
                   {filteredExpenses.map((expense) => (
-                    <tr key={expense.id} className="hover:bg-gray-50">
-                      <td className="px-4 py-3 text-sm text-gray-600">
+                    <tr key={expense.id} className="hover:bg-hover">
+                      <td className="px-4 py-3 text-sm text-secondary">
                         {new Date(expense.expense_date).toLocaleDateString()}
                       </td>
                       <td className="px-4 py-3">
-                        <div className="font-medium text-gray-900">{expense.name}</div>
+                        <div className="font-medium text-primary">{expense.name}</div>
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-600">{expense.category}</td>
-                      <td className="px-4 py-3 text-right font-medium text-gray-900">
+                      <td className="px-4 py-3 text-sm text-secondary">{expense.category}</td>
+                      <td className="px-4 py-3 text-right font-medium text-primary">
                         ₱{expense.amount.toFixed(2)}
                       </td>
                       <td className="px-4 py-3 text-center">
@@ -333,20 +341,26 @@ export default function SheetDetailPage() {
                       </td>
                       <td className="px-4 py-3 text-center">
                         <div className="flex items-center justify-center gap-1">
-                          <button
+                          <Button
                             onClick={() => setEditingExpense(expense.id)}
-                            className="p-1 text-gray-400 hover:text-blue-500"
+                            variant="ghost"
+                            size="sm"
+                            className="!p-1 !text-tertiary hover:!text-link"
                             title="Edit"
+                            aria-label="Edit expense"
                           >
                             <Edit2 size={14} />
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             onClick={() => deleteExpense(expense.id)}
-                            className="p-1 text-gray-400 hover:text-red-500"
+                            variant="ghost"
+                            size="sm"
+                            className="!p-1 !text-tertiary hover:!text-error"
                             title="Delete"
+                            aria-label="Delete expense"
                           >
                             <Trash2 size={14} />
-                          </button>
+                          </Button>
                         </div>
                       </td>
                     </tr>
