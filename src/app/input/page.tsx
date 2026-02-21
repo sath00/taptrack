@@ -2,24 +2,10 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useAuth } from '@/hooks/useAuth'
-import { supabase } from '@/lib/supabase'
+import { expensesApi } from '@/lib/api/expenses'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { ArrowLeft, Plus, Check, X } from 'lucide-react'
-
-interface ExpenseSheet {
-  id: string
-  name: string
-}
-
-interface Expense {
-  id: string
-  name: string
-  category: string
-  amount: number
-  status: string
-  expense_date: string
-  created_at: string
-}
+import { ArrowLeft } from 'lucide-react'
+import type { ExpenseSheet, Expense } from '@/lib/api/types'
 
 const CATEGORIES = [
   'Food', 'Transportation', 'Pets', 'Skincare', 'Shopping',
@@ -77,17 +63,11 @@ export default function InputPage() {
     if (!user) return
 
     try {
-      const { data, error } = await supabase
-        .from('expense_sheets')
-        .select('id, name')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-
-      if (error) throw error
-      setSheets(data || [])
+      const data = await expensesApi.getSheets()
+      setSheets(data)
 
       // If no sheet selected and we have sheets, select the first one
-      if (!selectedSheetId && data && data.length > 0) {
+      if (!selectedSheetId && data.length > 0) {
         setSelectedSheetId(data[0].id)
         fetchRecentExpenses(data[0].id)
       }
@@ -100,16 +80,8 @@ export default function InputPage() {
     if (!user || !sheetId) return
 
     try {
-      const { data, error } = await supabase
-        .from('expenses')
-        .select('*')
-        .eq('sheet_id', sheetId)
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(5)
-
-      if (error) throw error
-      setRecentExpenses(data || [])
+      const data = await expensesApi.getRecentExpenses(sheetId, 5)
+      setRecentExpenses(data)
     } catch (error) {
       console.error('Error fetching recent expenses:', error)
     }
@@ -123,20 +95,14 @@ export default function InputPage() {
     setMessage('')
 
     try {
-      const { data, error } = await supabase
-        .from('expenses')
-        .insert({
-          user_id: user.id,
-          sheet_id: selectedSheetId,
-          name: name.trim(),
-          category,
-          amount: parseFloat(amount),
-          status,
-          expense_date: new Date().toISOString().split('T')[0]
-        })
-        .select()
-
-      if (error) throw error
+      await expensesApi.createExpense({
+        sheet: parseInt(selectedSheetId),
+        name: name.trim(),
+        category,
+        amount: parseFloat(amount),
+        status,
+        expense_date: new Date().toISOString().split('T')[0]
+      })
 
       // Clear form
       setName('')

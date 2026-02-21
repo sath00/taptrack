@@ -1,65 +1,65 @@
 'use client'
 
-import { useState } from 'react'
-import { supabase } from '@/lib/supabase'
+import { useState, useEffect, FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
+import { useAuth } from '@/hooks/useAuth'
+import { login, register, resetPassword } from '@/store/slices/authSlice'
+import { useAppDispatch } from '@/store/hooks'
 
 export default function AuthPage() {
+  const dispatch = useAppDispatch()
+  const router = useRouter()
+  const { user, loading, error, message, clearError: clearAuthError, clearMessage: clearAuthMessage } = useAuth()
+
   const [isLogin, setIsLogin] = useState(true)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [message, setMessage] = useState('')
   const [showForgotPassword, setShowForgotPassword] = useState(false)
-  const router = useRouter()
 
-  const handleAuth = async (e: React.FormEvent) => {
+  useEffect(() => {
+    // Clear messages when component mounts
+    clearAuthError()
+    clearAuthMessage()
+  }, [clearAuthError, clearAuthMessage])
+
+  useEffect(() => {
+    // Redirect if already logged in
+    if (user) {
+      router.push('/dashboard')
+    }
+  }, [user, router])
+
+  const handleAuth = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setLoading(true)
-    setMessage('')
+    clearAuthError()
+    clearAuthMessage()
 
     try {
       if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        })
-        if (error) throw error
+        await dispatch(login({ email, password })).unwrap()
         router.push('/dashboard')
       } else {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-        })
-        if (error) throw error
-        setMessage('Check your email for verification link!')
+        await dispatch(register({ email, password })).unwrap()
+        setTimeout(() => router.push('/dashboard'), 1500)
       }
-    } catch (error: any) {
-      setMessage(error.message)
-    } finally {
-      setLoading(false)
+    } catch (error) {
+      // Error is handled by Redux state
+      console.error('Auth error:', error)
     }
   }
 
-  const handleForgotPassword = async (e: React.FormEvent) => {
+  const handleForgotPassword = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!email) {
-      setMessage('Please enter your email address')
       return
     }
 
-    setLoading(true)
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth?reset=true`,
-      })
-      if (error) throw error
-      setMessage('Password reset link sent to your email!')
+      await dispatch(resetPassword(email)).unwrap()
       setShowForgotPassword(false)
-    } catch (error: any) {
-      setMessage(error.message)
-    } finally {
-      setLoading(false)
+    } catch (error) {
+      // Error is handled by Redux state
+      console.error('Password reset error:', error)
     }
   }
 
@@ -69,7 +69,7 @@ export default function AuthPage() {
         <h1 className="text-3xl font-bold text-gray-900 text-center mb-8">
           Budget Tracker
         </h1>
-        
+
         <div className="flex mb-6">
           <button
             className={`flex-1 py-2 px-4 rounded-l-lg font-medium transition-colors ${
@@ -145,11 +145,11 @@ export default function AuthPage() {
           </button>
         )}
 
-        {message && (
+        {(message || error) && (
           <p className={`mt-4 text-sm text-center ${
-            message.includes('Check your email') ? 'text-green-600' : 'text-red-600'
+            message ? 'text-green-600' : 'text-red-600'
           }`}>
-            {message}
+            {message || error}
           </p>
         )}
       </div>

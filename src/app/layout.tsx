@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
+import ReduxProvider from '@/providers/ReduxProvider'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -39,7 +40,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="Budget Tracker" />
         <script dangerouslySetInnerHTML={{
           __html: `
-            if ('serviceWorker' in navigator) {
+            if (typeof window !== 'undefined' && '${process.env.NODE_ENV}' === 'production' && 'serviceWorker' in navigator) {
               window.addEventListener('load', function() {
                 navigator.serviceWorker.register('/sw.js')
                   .then(function(registration) {
@@ -53,7 +54,11 @@ export default function RootLayout({
           `
         }} />
       </head>
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <ReduxProvider>
+          {children}
+        </ReduxProvider>
+      </body>
     </html>
   )
 }
