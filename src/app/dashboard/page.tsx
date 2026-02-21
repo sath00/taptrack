@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/hooks/useAuth'
-import { useDispatch } from 'react-redux'
 import { useRouter } from 'next/navigation'
 import { Plus, FileText } from 'lucide-react'
 import Button from '../components/ui/Button'
@@ -23,10 +22,10 @@ interface ExpenseSheet {
 }
 
 function Dashboard() {
-  const dispatch = useDispatch()
-  const { user, loading: authLoading } = useAuth()
+  const { user, loading: authLoading, signOut } = useAuth()
   const [sheets, setSheets] = useState<ExpenseSheet[]>([])
   const [loading, setLoading] = useState(true)
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
   const [editingSheet, setEditingSheet] = useState<ExpenseSheet | null>(null)
@@ -36,11 +35,11 @@ function Dashboard() {
   useEffect(() => {
     if (authLoading) return
     if (!user) {
-      router.push('/auth')
+      router.push('/signin')
       return
     }
     fetchSheets()
-  }, [user, authLoading, router, dispatch])
+  }, [user, authLoading, router])
 
   // ✅ Fetch sheets using your new API
   const fetchSheets = async () => {
@@ -101,6 +100,14 @@ function Dashboard() {
     setEditingSheet(sheet)
     setShowEditModal(true)
   }
+  const handleLogout = async () => {
+    try {
+      setIsLoggingOut(true)
+      await signOut()
+    } finally {
+      setIsLoggingOut(false)
+    }
+  }
 
   const getFilteredSheets = () => {
     if (!searchQuery.trim()) return sheets
@@ -140,8 +147,12 @@ function Dashboard() {
           <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-bg-tertiary text-text-primary">
             Profile
           </button>
-          <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-bg-tertiary text-text-primary">
-            Logout
+          <button
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+            className="w-full text-left px-3 py-2 rounded-lg hover:bg-bg-tertiary text-text-primary disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {isLoggingOut ? 'Logging out...' : 'Logout'}
           </button>
         </div>
       </aside>

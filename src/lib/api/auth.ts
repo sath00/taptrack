@@ -3,10 +3,11 @@ import { User, AuthResponse } from './types'
 
 export class AuthApiClient extends BaseApiClient {
   async register(email: string, password: string): Promise<AuthResponse> {
+    const normalizedEmail = email.trim()
     const data = await this.request<AuthResponse>('/auth/register/', {
       method: 'POST',
       body: JSON.stringify({
-        email,
+        email: normalizedEmail,
         password,
         password_confirm: password
       }),
@@ -19,9 +20,10 @@ export class AuthApiClient extends BaseApiClient {
   }
 
   async login(email: string, password: string): Promise<AuthResponse> {
+    const normalizedEmail = email.trim()
     const data = await this.request<AuthResponse>('/auth/login/', {
       method: 'POST',
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email: normalizedEmail, password }),
       skipAuth: true
     })
 
@@ -46,9 +48,10 @@ export class AuthApiClient extends BaseApiClient {
   }
 
   async resetPassword(email: string): Promise<{ message: string }> {
+    const normalizedEmail = email.trim()
     return this.request('/auth/password-reset/', {
       method: 'POST',
-      body: JSON.stringify({ email }),
+      body: JSON.stringify({ email: normalizedEmail }),
       skipAuth: true
     })
   }

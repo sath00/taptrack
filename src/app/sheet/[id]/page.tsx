@@ -29,7 +29,7 @@ export default function SheetDetailPage() {
   useEffect(() => {
     if (authLoading) return
     if (!user) {
-      router.push('/auth')
+      router.push('/signin')
       return
     }
 

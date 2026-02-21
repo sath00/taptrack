@@ -14,7 +14,7 @@ export default function Home() {
     if (tokens && user) {
       router.push('/dashboard')
     } else {
-      router.push('/auth')
+      router.push('/signin')
     }
   }, [tokens, user, loading, router])
 

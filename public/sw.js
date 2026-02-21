@@ -1,7 +1,8 @@
-const CACHE_NAME = 'budget-tracker-v1';
+const CACHE_NAME = 'budget-tracker-v2';
 const urlsToCache = [
   '/',
-  '/auth',
+  '/signin',
+  '/signup',
   '/dashboard',
   '/input',
   '/manifest.json'

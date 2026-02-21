@@ -58,11 +58,11 @@ export function useAuth() {
     try {
       await dispatch(logout()).unwrap()
       hasValidated.current = false
-      router.push('/auth')
+      router.push('/signin')
     } catch (error) {
       console.error('Logout error:', error)
       hasValidated.current = false
-      router.push('/auth')
+      router.push('/signin')
     }
   }
 
