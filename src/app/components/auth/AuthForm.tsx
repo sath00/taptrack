@@ -9,6 +9,7 @@ import { useAppDispatch } from '@/store/hooks'
 import Button from '@/app/components/ui/Button'
 import Input from '@/app/components/ui/Input'
 import Image from 'next/image'
+import ThemeToggle from '@/app/components/layout/ThemeToggle'
 
 type AuthMode = 'signin' | 'signup'
 
@@ -107,7 +108,10 @@ export default function AuthForm({ mode }: AuthFormProps) {
 
   return (
     <div className="min-h-screen bg-secondary flex items-center justify-center p-4">
-      <div className="bg-primary rounded-xl shadow-xl w-full max-w-md p-8 border border-secondary">
+      <div className="relative bg-primary rounded-xl shadow-xl w-full max-w-md p-8 border border-secondary">
+        <div className="absolute top-4 right-4">
+          <ThemeToggle />
+        </div>
         <div className="flex justify-center">
           <Image
             src="/logo_540x148.svg"

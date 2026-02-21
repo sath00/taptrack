@@ -209,7 +209,7 @@ export default function Sidebar({
           variant="textDanger"
           fullWidth
           className={`group !justify-start !px-3 !py-3
-            hover:!bg-red-50 hover:shadow-sm hover:translate-x-1
+            hover:!bg-error/10 hover:shadow-sm hover:translate-x-1
             active:translate-x-0 transition-all duration-200 ${
             !isExpanded && !mobile && '!justify-center hover:!translate-x-0'
           }`}

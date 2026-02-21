@@ -30,7 +30,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="manifest" href="/manifest.json" />
         <link rel="icon" href="/frog_120x120.svg" type="image/svg+xml" />
@@ -39,6 +39,28 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="TapTrack" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function () {
+                try {
+                  var key = 'taptrack-theme';
+                  var saved = localStorage.getItem(key);
+                  var theme = (saved === 'light' || saved === 'dark')
+                    ? saved
+                    : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                  document.documentElement.setAttribute('data-theme', theme);
+                  var metaTheme = document.querySelector('meta[name=\"theme-color\"]');
+                  if (metaTheme) {
+                    metaTheme.setAttribute('content', theme === 'dark' ? '#0B1220' : '#F59E0B');
+                  }
+                } catch (_) {
+                  document.documentElement.setAttribute('data-theme', 'light');
+                }
+              })();
+            `,
+          }}
+        />
         <script dangerouslySetInnerHTML={{
           __html: `
             if (typeof window !== 'undefined' && '${process.env.NODE_ENV}' === 'production' && 'serviceWorker' in navigator) {

@@ -3,6 +3,7 @@
 import { LogOut, Menu, Plus, User } from 'lucide-react'
 import Button from '../ui/Button'
 import Input from '../ui/Input'
+import ThemeToggle from './ThemeToggle'
 
 interface TopbarProps {
   title?: string
@@ -47,6 +48,7 @@ export default function Topbar({
           <span className="text-text-primary">Track</span>
         </h2>
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           <Button variant="text" size="sm" aria-label="Profile" className="!p-2 !min-w-0">
             <User size={16} />
           </Button>
@@ -76,6 +78,9 @@ export default function Topbar({
                 placeholder={searchPlaceholder}
                 className="bg-primary"
               />
+            </div>
+            <div className="hidden md:block">
+              <ThemeToggle />
             </div>
             {showAddButton && (
               <Button onClick={onAddSheet} variant="primary" className="shrink-0 sm:px-5 sm:py-3">

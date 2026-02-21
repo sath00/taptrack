@@ -41,8 +41,8 @@ const Card: React.FC<CardProps> = ({
   return (
     <div 
       className={`
-        bg-surface-primary rounded-lg border border-border-light shadow-sm
-        ${hover ? 'hover:shadow-base transition-shadow cursor-pointer' : ''}
+        bg-primary rounded-lg border border-border-primary shadow-sm
+        ${hover ? 'hover:shadow-md transition-shadow cursor-pointer' : ''}
         ${onClick ? 'cursor-pointer' : ''}
         ${className}
       `}

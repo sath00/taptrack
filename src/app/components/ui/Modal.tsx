@@ -80,7 +80,7 @@ const Modal: React.FC<ModalProps> = ({
         >
           <motion.div
             ref={modalRef}
-            className={`bg-white rounded-2xl shadow-lg w-full ${sizeClasses[size]} max-h-[90vh] overflow-y-auto ${className}`}
+            className={`bg-primary border border-primary rounded-2xl shadow-lg w-full ${sizeClasses[size]} max-h-[90vh] overflow-y-auto ${className}`}
             initial={{ scale: 0.95, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.95, opacity: 0, y: 20 }}
@@ -115,7 +115,7 @@ const Modal: React.FC<ModalProps> = ({
 
             {/* Footer (optional) */}
             {(footerLeft || footerRight) && (
-              <div className="flex items-center justify-between gap-2 p-4 border-t border-primary">
+              <div className="flex items-center justify-between gap-2 p-4 border-t border-border-primary">
                 <div className="flex gap-2">{footerLeft}</div>
                 <div className="flex gap-2">{footerRight}</div>
               </div>
