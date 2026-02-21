@@ -1,15 +1,21 @@
 import React from 'react';
 
+type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'success'
+type ButtonSize = 'sm' | 'md' | 'lg'
+
 interface ButtonProps {
   children: React.ReactNode;
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'success';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: ButtonVariant;
+  size?: ButtonSize;
   disabled?: boolean;
   loading?: boolean;
-  onClick?: (e: React.MouseEvent) => void;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   type?: 'button' | 'submit' | 'reset';
   className?: string;
   fullWidth?: boolean;
+  title?: string;
+  id?: string;
+  'aria-label'?: string;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -22,6 +28,9 @@ const Button: React.FC<ButtonProps> = ({
   type = 'button',
   className = '',
   fullWidth = false,
+  title,
+  id,
+  'aria-label': ariaLabel,
 }) => {
   const baseClasses = `inline-flex items-center justify-center font-medium rounded-lg
     transition-all duration-200 ease-in-out
@@ -31,20 +40,20 @@ const Button: React.FC<ButtonProps> = ({
     transform active:scale-95
     ${fullWidth ? 'w-full' : ''}`;
 
-  const sizeClasses: Record<string, string> = {
+  const sizeClasses: Record<ButtonSize, string> = {
     sm: 'px-3 py-1.5 text-sm gap-1.5',
     md: 'px-4 py-2.5 text-sm gap-2',
     lg: 'px-6 py-3.5 text-base gap-2.5',
   };
 
-const variantClasses: Record<ButtonProps['variant'], string> = {
-  primary: 'btn-primary shadow-sm',
-  secondary: 'btn-secondary',
-  outline: 'btn-outline',
-  ghost: 'btn-ghost',
-  danger: 'btn-danger shadow-sm',
-  success: 'btn-success shadow-sm',
-};
+  const variantClasses: Record<ButtonVariant, string> = {
+    primary: 'btn-primary shadow-sm',
+    secondary: 'btn-secondary',
+    outline: 'btn-outline',
+    ghost: 'btn-ghost',
+    danger: 'btn-danger shadow-sm',
+    success: 'btn-success shadow-sm',
+  };
 
   const loadingSpinnerColor: Record<string, string> = {
     primary: 'border-white',
@@ -64,6 +73,9 @@ const variantClasses: Record<ButtonProps['variant'], string> = {
       onClick={onClick}
       type={type}
       disabled={disabled || loading}
+      title={title}
+      id={id}
+      aria-label={ariaLabel}
     >
       {loading && (
         <span

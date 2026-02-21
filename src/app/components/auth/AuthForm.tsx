@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import { login, register, resetPassword } from '@/store/slices/authSlice'
 import { useAppDispatch } from '@/store/hooks'
+import Button from '@/app/components/ui/Button'
+import Input from '@/app/components/ui/Input'
 
 type AuthMode = 'signin' | 'signup'
 
@@ -134,34 +136,33 @@ export default function AuthForm({ mode }: AuthFormProps) {
         </div>
 
         <form onSubmit={isForgotPasswordMode ? handleForgotPassword : handleAuth} className="space-y-4">
-          <div>
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 border border-primary rounded-lg focus:outline-none focus:border-focus text-primary"
-              required
-            />
-          </div>
+          <Input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={setEmail}
+            required
+          />
 
           {!isForgotPasswordMode && (
             <div className="relative">
-              <input
+              <Input
                 type={showPassword ? 'text' : 'password'}
                 placeholder="Password"
                 value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value)
+                onChange={(value) => {
+                  setPassword(value)
                   if (validationError) setValidationError('')
                 }}
-                className="w-full px-4 py-3 pr-12 border border-primary rounded-lg focus:outline-none focus:border-focus text-primary"
+                className="pr-12"
                 required
               />
-              <button
+              <Button
                 type="button"
                 onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 icon-secondary hover:icon-primary transition-colors"
+                variant="ghost"
+                size="sm"
+                className="absolute right-2 top-1/2 -translate-y-1/2 !p-2 icon-secondary hover:icon-primary transition-colors"
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? (
@@ -177,7 +178,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
                     <circle cx="12" cy="12" r="3" />
                   </svg>
                 )}
-              </button>
+              </Button>
             </div>
           )}
 
@@ -189,23 +190,25 @@ export default function AuthForm({ mode }: AuthFormProps) {
 
           {!isLogin && (
             <div className="relative">
-              <input
+              <Input
                 type={showConfirmPassword ? 'text' : 'password'}
                 placeholder="Confirm Password"
                 value={confirmPassword}
-                onChange={(e) => {
-                  setConfirmPassword(e.target.value)
+                onChange={(value) => {
+                  setConfirmPassword(value)
                   if (validationError) setValidationError('')
                 }}
-                className={`w-full px-4 py-3 pr-12 border rounded-lg focus:outline-none focus:border-focus text-primary ${
+                className={`pr-12 ${
                   validationError ? 'border-error' : 'border-primary'
                 }`}
                 required
               />
-              <button
+              <Button
                 type="button"
                 onClick={() => setShowConfirmPassword((prev) => !prev)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 icon-secondary hover:icon-primary transition-colors"
+                variant="ghost"
+                size="sm"
+                className="absolute right-2 top-1/2 -translate-y-1/2 !p-2 icon-secondary hover:icon-primary transition-colors"
                 aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
               >
                 {showConfirmPassword ? (
@@ -221,39 +224,42 @@ export default function AuthForm({ mode }: AuthFormProps) {
                     <circle cx="12" cy="12" r="3" />
                   </svg>
                 )}
-              </button>
+              </Button>
             </div>
           )}
 
           {!!validationError && <p className="text-sm text-error">{validationError}</p>}
 
-          <button
+          <Button
             type="submit"
-            disabled={loading}
-            className="w-full btn-primary py-3 rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            loading={loading}
+            fullWidth
+            className="py-3"
           >
-            {loading
-              ? 'Loading...'
-              : (isForgotPasswordMode ? 'Send Reset Link' : (isLogin ? 'Sign In' : 'Sign Up'))}
-          </button>
+            {isForgotPasswordMode ? 'Send Reset Link' : (isLogin ? 'Sign In' : 'Sign Up')}
+          </Button>
         </form>
 
         {isLogin && !isForgotPasswordMode && (
-          <button
+          <Button
             onClick={() => setShowForgotPassword(true)}
-            className="w-full mt-3 text-sm text-link hover:opacity-80"
+            variant="ghost"
+            fullWidth
+            className="mt-3 text-sm text-link hover:opacity-80"
           >
             Forgot your password?
-          </button>
+          </Button>
         )}
 
         {isForgotPasswordMode && (
-          <button
+          <Button
             onClick={() => setShowForgotPassword(false)}
-            className="w-full mt-3 text-sm text-secondary hover:text-primary"
+            variant="ghost"
+            fullWidth
+            className="mt-3 text-sm text-secondary hover:text-primary"
           >
             Back to sign in
-          </button>
+          </Button>
         )}
 
         {(message || error) && (

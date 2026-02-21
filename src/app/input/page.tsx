@@ -6,6 +6,7 @@ import { expensesApi } from '@/lib/api/expenses'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 import type { ExpenseSheet, Expense } from '@/lib/api/types'
+import { Button, Input, Select } from '../components/ui'
 
 const CATEGORIES = [
   'Food', 'Transportation', 'Pets', 'Skincare', 'Shopping',
@@ -122,8 +123,12 @@ export default function InputPage() {
       // Clear success message after 2 seconds
       setTimeout(() => setMessage(''), 2000)
 
-    } catch (error: any) {
-      setMessage(`Error: ${error.message}`)
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setMessage(`Error: ${error.message}`)
+      } else {
+        setMessage('Error: Failed to add expense')
+      }
     } finally {
       setLoading(false)
     }
@@ -155,12 +160,12 @@ export default function InputPage() {
         <div className="text-center">
           <h2 className="text-xl font-medium text-gray-900 mb-4">No Sheets Available</h2>
           <p className="text-gray-600 mb-6">Create a sheet first to start adding expenses</p>
-          <button
+          <Button
             onClick={() => router.push('/dashboard')}
-            className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600"
+            className="px-6 py-2"
           >
             Go to Dashboard
-          </button>
+          </Button>
         </div>
       </div>
     )
@@ -171,12 +176,15 @@ export default function InputPage() {
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-lg mx-auto px-4 py-4 flex items-center justify-between">
-          <button
+          <Button
             onClick={() => router.push('/dashboard')}
-            className="p-2 hover:bg-gray-100 rounded-lg"
+            variant="ghost"
+            size="sm"
+            className="!p-2"
+            aria-label="Back to dashboard"
           >
             <ArrowLeft size={20} />
-          </button>
+          </Button>
           <h1 className="text-lg font-semibold">Quick Add</h1>
           <div className="w-10" /> {/* Spacer */}
         </div>
@@ -186,85 +194,77 @@ export default function InputPage() {
         {/* Sheet Selector */}
         {sheets.length > 1 && (
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Sheet
-            </label>
-            <select
+            <Select
+              label="Sheet"
               value={selectedSheetId}
-              onChange={(e) => {
-                setSelectedSheetId(e.target.value)
-                fetchRecentExpenses(e.target.value)
+              onChange={(value) => {
+                setSelectedSheetId(value)
+                fetchRecentExpenses(value)
               }}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+              className="py-3"
             >
               {sheets.map((sheet) => (
                 <option key={sheet.id} value={sheet.id}>
                   {sheet.name}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
         )}
 
         {/* Quick Input Form */}
         <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <input
-                ref={nameInputRef}
-                type="text"
-                placeholder="Expense name (e.g., lunch, tricycle fare)"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full px-4 py-3 text-lg border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+            <Input
+              inputRef={nameInputRef}
+              type="text"
+              placeholder="Expense name (e.g., lunch, tricycle fare)"
+              value={name}
+              onChange={setName}
+              className="text-lg"
+              required
+            />
+
+            <div className="grid grid-cols-2 gap-3">
+              <Select
+                value={category}
+                onChange={setCategory}
+                className="py-3"
+              >
+                {CATEGORIES.map((cat) => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </Select>
+              <Input
+                type="number"
+                step="0.01"
+                min="0"
+                placeholder="Amount"
+                value={amount}
+                onChange={setAmount}
+                className="text-lg"
                 required
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <select
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                >
-                  {CATEGORIES.map((cat) => (
-                    <option key={cat} value={cat}>{cat}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <input
-                  type="number"
-                  step="0.01"
-                  placeholder="Amount"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  className="w-full px-3 py-3 text-lg border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                  required
-                />
-              </div>
-            </div>
-
-            <div>
-              <select
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-              >
-                {STATUSES.map((stat) => (
-                  <option key={stat} value={stat}>{stat}</option>
-                ))}
-              </select>
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-blue-500 text-white py-4 rounded-lg font-medium text-lg hover:bg-blue-600 disabled:opacity-50 transition-colors"
+            <Select
+              value={status}
+              onChange={setStatus}
+              className="py-3"
             >
-              {loading ? 'Adding...' : 'Add Expense'}
-            </button>
+              {STATUSES.map((stat) => (
+                <option key={stat} value={stat}>{stat}</option>
+              ))}
+            </Select>
+
+            <Button
+              type="submit"
+              loading={loading}
+              fullWidth
+              className="py-4 text-lg"
+            >
+              Add Expense
+            </Button>
           </form>
 
           {message && (

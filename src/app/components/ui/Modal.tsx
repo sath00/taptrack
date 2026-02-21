@@ -3,6 +3,7 @@
 import React, { useEffect, useRef } from "react"
 import { X } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+import Button from "./Button"
 
 interface ModalProps {
   isOpen: boolean
@@ -94,13 +95,15 @@ const Modal: React.FC<ModalProps> = ({
                   </h2>
                 )}
                 {showCloseButton && (
-                  <button
+                  <Button
                     onClick={onClose}
-                    className="p-2 hover:bg-bg-secondary rounded-full text-icon-secondary hover:text-icon-primary transition"
+                    variant="ghost"
+                    size="sm"
+                    className="!p-2 !rounded-full !text-icon-secondary hover:!text-icon-primary"
                     aria-label="Close modal"
                   >
                     <X size={20} />
-                  </button>
+                  </Button>
                 )}
               </div>
             )}

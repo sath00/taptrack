@@ -6,6 +6,7 @@ import { expensesApi } from '@/lib/api/expenses'
 import { useRouter, useParams } from 'next/navigation'
 import { ArrowLeft, Plus, Download, Edit2, Trash2 } from 'lucide-react'
 import type { ExpenseSheet, Expense } from '@/lib/api/types'
+import { Button, Select } from '../../components/ui'
 
 interface CategoryTotal {
   category: string
@@ -175,12 +176,15 @@ export default function SheetDetailPage() {
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <button
+              <Button
                 onClick={() => router.push('/dashboard')}
-                className="p-2 hover:bg-gray-100 rounded-lg"
+                variant="ghost"
+                size="sm"
+                className="!p-2"
+                aria-label="Back to dashboard"
               >
                 <ArrowLeft size={20} />
-              </button>
+              </Button>
               <div>
                 <h1 className="text-xl font-bold text-gray-900">{sheet?.name}</h1>
                 <p className="text-sm text-gray-600">
@@ -189,20 +193,23 @@ export default function SheetDetailPage() {
               </div>
             </div>
             <div className="flex gap-2">
-              <button
+              <Button
                 onClick={exportToCSV}
-                className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+                variant="ghost"
+                size="sm"
+                className="!p-2 text-gray-600"
                 title="Export to CSV"
+                aria-label="Export to CSV"
               >
                 <Download size={20} />
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => router.push(`/input?sheet=${sheetId}`)}
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 flex items-center gap-2"
+                className="px-4 py-2"
               >
                 <Plus size={20} />
                 <span className="hidden sm:inline">Add Expense</span>
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -234,29 +241,29 @@ export default function SheetDetailPage() {
         <div className="bg-white rounded-lg shadow-sm border p-4 mb-6">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Filter by Category</label>
-              <select
+              <Select
+                label="Filter by Category"
                 value={filter}
-                onChange={(e) => setFilter(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                onChange={setFilter}
+                className="py-2"
               >
                 <option value="all">All Categories</option>
                 {uniqueCategories.map((category) => (
                   <option key={category} value={category}>{category}</option>
                 ))}
-              </select>
+              </Select>
             </div>
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Sort by</label>
-              <select
+              <Select
+                label="Sort by"
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as 'date' | 'amount' | 'category')}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                onChange={(value) => setSortBy(value as 'date' | 'amount' | 'category')}
+                className="py-2"
               >
                 <option value="date">Date (Newest first)</option>
                 <option value="amount">Amount (Highest first)</option>
                 <option value="category">Category</option>
-              </select>
+              </Select>
             </div>
           </div>
         </div>
@@ -292,12 +299,13 @@ export default function SheetDetailPage() {
             <div className="p-8 text-center">
               <p className="text-gray-600">No expenses found</p>
               {filter !== 'all' && (
-                <button
+                <Button
                   onClick={() => setFilter('all')}
+                  variant="ghost"
                   className="mt-2 text-blue-500 hover:text-blue-600"
                 >
                   Show all expenses
-                </button>
+                </Button>
               )}
             </div>
           ) : (
@@ -333,20 +341,26 @@ export default function SheetDetailPage() {
                       </td>
                       <td className="px-4 py-3 text-center">
                         <div className="flex items-center justify-center gap-1">
-                          <button
+                          <Button
                             onClick={() => setEditingExpense(expense.id)}
-                            className="p-1 text-gray-400 hover:text-blue-500"
+                            variant="ghost"
+                            size="sm"
+                            className="!p-1 text-gray-400 hover:text-blue-500"
                             title="Edit"
+                            aria-label="Edit expense"
                           >
                             <Edit2 size={14} />
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             onClick={() => deleteExpense(expense.id)}
-                            className="p-1 text-gray-400 hover:text-red-500"
+                            variant="ghost"
+                            size="sm"
+                            className="!p-1 text-gray-400 hover:text-red-500"
                             title="Delete"
+                            aria-label="Delete expense"
                           >
                             <Trash2 size={14} />
-                          </button>
+                          </Button>
                         </div>
                       </td>
                     </tr>

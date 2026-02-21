@@ -133,27 +133,39 @@ function Dashboard() {
       <aside className="hidden md:flex flex-col w-60 bg-bg-secondary border-r border-border-primary p-4">
         <h2 className="text-xl font-bold text-primary mb-6">TapTrack</h2>
         <nav className="flex-1 space-y-2">
-          <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-bg-tertiary font-medium text-text-primary">
+          <Button
+            variant="ghost"
+            fullWidth
+            className="!justify-start !px-3 !py-2 font-medium text-text-primary"
+          >
             Personal
-          </button>
-          <button
+          </Button>
+          <Button
             disabled
-            className="w-full text-left px-3 py-2 rounded-lg font-medium text-text-secondary"
+            variant="ghost"
+            fullWidth
+            className="!justify-start !px-3 !py-2 font-medium text-text-secondary"
           >
             Shared (Coming soon)
-          </button>
+          </Button>
         </nav>
         <div className="mt-auto space-y-2">
-          <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-bg-tertiary text-text-primary">
-            Profile
-          </button>
-          <button
-            onClick={handleLogout}
-            disabled={isLoggingOut}
-            className="w-full text-left px-3 py-2 rounded-lg hover:bg-bg-tertiary text-text-primary disabled:opacity-60 disabled:cursor-not-allowed"
+          <Button
+            variant="ghost"
+            fullWidth
+            className="!justify-start !px-3 !py-2 text-text-primary"
           >
-            {isLoggingOut ? 'Logging out...' : 'Logout'}
-          </button>
+            Profile
+          </Button>
+          <Button
+            onClick={handleLogout}
+            loading={isLoggingOut}
+            variant="ghost"
+            fullWidth
+            className="!justify-start !px-3 !py-2 text-text-primary"
+          >
+            Logout
+          </Button>
         </div>
       </aside>
 
