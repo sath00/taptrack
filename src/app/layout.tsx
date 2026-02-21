@@ -4,6 +4,7 @@ import './globals.css'
 import ReduxProvider from '@/providers/ReduxProvider'
 
 const inter = Inter({ subsets: ['latin'] })
+const swVersion = process.env.NEXT_PUBLIC_BUILD_ID || 'dev'
 
 export const metadata: Metadata = {
   title: 'Budget Tracker',
@@ -19,9 +20,8 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
-  themeColor: '#3b82f6',
+  viewportFit: 'cover',
+  themeColor: '#F59E0B',
 }
 
 export default function RootLayout({
@@ -33,7 +33,7 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#3b82f6" />
+        <meta name="theme-color" content="#F59E0B" />
         <link rel="apple-touch-icon" href="/icon-192x192.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -42,7 +42,7 @@ export default function RootLayout({
           __html: `
             if (typeof window !== 'undefined' && '${process.env.NODE_ENV}' === 'production' && 'serviceWorker' in navigator) {
               window.addEventListener('load', function() {
-                navigator.serviceWorker.register('/sw.js')
+                navigator.serviceWorker.register('/sw.js?v=${swVersion}')
                   .then(function(registration) {
                     console.log('SW registered: ', registration);
                   })

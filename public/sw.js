@@ -1,10 +1,12 @@
-const CACHE_NAME = 'budget-tracker-v2';
+const SW_VERSION = new URL(self.location.href).searchParams.get('v') || 'dev';
+const CACHE_NAME = `budget-tracker-${SW_VERSION}`;
 const urlsToCache = [
   '/',
   '/signin',
   '/signup',
   '/dashboard',
   '/input',
+  '/testing-page/input',
   '/manifest.json'
 ];
 
