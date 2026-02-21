@@ -84,6 +84,31 @@ export default function ButtonTestPage() {
             </div>
           </section>
 
+          {/* Icon Only Buttons */}
+          <section className="mb-10">
+            <h2 className="text-xl font-semibold text-text-primary mb-4">Icon Only Buttons</h2>
+            <div className="flex flex-wrap items-center gap-3">
+              <Button variant="primary" size="sm" aria-label="Add item" className="!p-2 !min-w-0">
+                <Plus size={16} />
+              </Button>
+              <Button variant="secondary" size="sm" aria-label="Download" className="!p-2 !min-w-0">
+                <Download size={16} />
+              </Button>
+              <Button variant="ghost" size="sm" aria-label="Delete" className="!p-2 !min-w-0">
+                <Trash2 size={16} />
+              </Button>
+              <Button variant="outline" size="sm" aria-label="Edit" className="!p-2 !min-w-0">
+                <Edit size={16} />
+              </Button>
+              <Button variant="success" size="sm" aria-label="Save" className="!p-2 !min-w-0">
+                <Save size={16} />
+              </Button>
+              <Button variant="danger" size="sm" aria-label="Delete" className="!p-2 !min-w-0">
+                <Trash2 size={16} />
+              </Button>
+            </div>
+          </section>
+
           {/* Loading States */}
           <section className="mb-10">
             <h2 className="text-xl font-semibold text-text-primary mb-4">Loading States</h2>
