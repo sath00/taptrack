@@ -118,7 +118,15 @@ export default function AuthForm({ mode }: AuthFormProps) {
             alt="TapTrack"
             width={540}
             height={148}
-            className="w-[320px] h-auto max-w-none"
+            className="w-[320px] h-auto max-w-none dark:hidden"
+            priority
+          />
+          <Image
+            src="/logo_540x144_darkmode_white.svg"
+            alt="TapTrack"
+            width={540}
+            height={144}
+            className="hidden w-[320px] h-auto max-w-none dark:block"
             priority
           />
         </div>

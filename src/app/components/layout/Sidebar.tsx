@@ -62,7 +62,14 @@ export default function Sidebar({
               alt="TapTrack"
               width={220}
               height={48}
-              className="mr-auto"
+              className="mr-auto dark:hidden"
+            />
+            <Image
+              src="/logo_540x144_darkmode_white.svg"
+              alt="TapTrack"
+              width={220}
+              height={48}
+              className="mr-auto hidden dark:block"
             />
             {mobile ? (
               <Button
@@ -98,7 +105,14 @@ export default function Sidebar({
                 alt="TapTrack"
                 width={48}
                 height={48}
-                className="h-12 w-auto transition-all duration-200 group-hover:opacity-0 group-hover:scale-110"
+                className="h-12 w-auto transition-all duration-200 group-hover:opacity-0 group-hover:scale-110 dark:hidden"
+              />
+              <Image
+                src="/compressed_frog_120x120_darkmode.svg"
+                alt="TapTrack"
+                width={48}
+                height={48}
+                className="hidden h-12 w-auto transition-all duration-200 group-hover:opacity-0 group-hover:scale-110 dark:block"
               />
               <ChevronRight
                 size={20}
